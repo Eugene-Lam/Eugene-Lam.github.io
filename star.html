@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深空攝影互動式入門指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cosmic Night (Dark blues, greys, and a muted gold accent) -->
+    <!-- Application Structure Plan: A task-oriented SPA with four main interactive modules: 1) A Gear Advisor to provide personalized equipment recommendations based on target type. 2) An interactive Workflow Checklist for in-the-field use, broken into procedural tabs. 3) An SNR Simulator chart to visually teach the core concept of signal vs. noise. 4) An Advanced Concepts explorer using clickable cards. This structure prioritizes practical decision-making and hands-on learning over the linear format of the source report, making the information more accessible and engaging for a beginner. -->
+    <!-- Visualization & Content Choices: 1) Gear Tables -> Advise -> Interactive Dropdowns/Text -> JS -> Guides user's primary decision. 2) SNR Theory -> Inform -> Interactive Line Chart -> JS/Chart.js -> Visualizes abstract concept. 3) Workflow Text -> Guide -> Interactive Tabs/Checklist -> HTML/JS -> Creates a practical field tool. 4) Calibration Table -> Inform -> Styled HTML Table -> CSS -> Clear data presentation. 5) Advanced Topics -> Organize -> Expandable Cards -> HTML/JS -> Prevents UI clutter. All visualizations are built with standard web technologies, avoiding external graphics libraries. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .tab-button.active {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .tab-button {
+            transition: background-color 0.3s ease;
+        }
+        .content-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            transition: transform 0.2s ease-in-out;
+        }
+        .content-card:hover {
+            transform: translateY(-4px);
+        }
+        .section-title {
+            color: #93c5fd;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 50vh;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-slate-900/70 backdrop-blur-lg sticky top-0 z-50 py-4">
+        <div class="container mx-auto px-4">
+            <h1 class="text-2xl md:text-3xl font-bold text-white text-center">
+                🔭 深空攝影互動式入門指南
+            </h1>
+            <p class="text-center text-slate-400 mt-1">為您的 Star Adventurer GTi & Nikon 相機打造</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 md:py-12 space-y-16">
+
+        <!-- Section 1: Gear Advisor -->
+        <section id="gear-advisor">
+            <h2 class="text-2xl font-bold mb-2 text-center section-title">🚀 器材智能顧問</h2>
+            <p class="text-center text-slate-400 max-w-2xl mx-auto mb-8">選擇您想拍攝的目標類型，程式將根據報告中的策略，為您推薦最佳的器材組合。這是您出發前最重要的規劃步驟。</p>
+            
+            <div class="content-card rounded-xl p-6 md:p-8 max-w-4xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <label for="target-type" class="block mb-2 font-bold text-slate-300">1. 選擇目標類型：</label>
+                        <select id="target-type" class="w-full p-3 rounded-lg bg-slate-800 border border-slate-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="emission_nebula">發射星雲 (例如: 獵戶座, 北美洲星雲)</option>
+                            <option value="broadband_galaxy">寬頻目標 - 星系 (例如: 仙女座, M81)</option>
+                            <option value="broadband_cluster">寬頻目標 - 星團/反射星雲 (例如: M45昴宿星團)</option>
+                            <option value="wide_field">超廣域星野 (例如: 銀河, 星座)</option>
+                        </select>
+                    </div>
+
+                    <div id="recommendation-output" class="space-y-6 mt-6 md:mt-0 p-6 bg-slate-900 rounded-lg">
+                        <div>
+                            <h4 class="font-bold text-lg text-blue-400 flex items-center">
+                                <span class="text-2xl mr-2">📷</span> 推薦相機
+                            </h4>
+                            <p id="camera-rec" class="text-lg font-semibold text-white"></p>
+                            <p id="camera-reason" class="text-sm text-slate-400"></p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-blue-400 flex items-center">
+                               <span class="text-2xl mr-2">🔭</span> 推薦鏡頭
+                            </h4>
+                            <p id="lens-rec" class="text-lg font-semibold text-white"></p>
+                            <p id="lens-reason" class="text-sm text-slate-400"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: SNR Simulator -->
+        <section id="snr-simulator">
+            <h2 class="text-2xl font-bold mb-2 text-center section-title">📊 信噪比 (SNR) 視覺化模擬器</h2>
+            <p class="text-center text-slate-400 max-w-2xl mx-auto mb-8">信噪比是天文攝影的聖杯。拖動下面的滑桿，直觀地感受「疊加更多照片」和「前往更暗地點」如何從根本上提升您的影像品質。</p>
+
+            <div class="content-card rounded-xl p-6 md:p-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="md:col-span-1 space-y-6">
+                        <div>
+                            <label for="exposure-count" class="block mb-2 font-bold text-slate-300">曝光數量 (疊圖力量)</label>
+                            <input id="exposure-count" type="range" min="1" max="200" value="10" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            <p class="text-center text-white mt-2"><span id="exposure-count-label" class="font-bold text-xl text-blue-400">10</span> 張</p>
+                        </div>
+                        <div>
+                            <label for="sky-glow" class="block mb-2 font-bold text-slate-300">天空輝光 (光害程度)</label>
+                            <input id="sky-glow" type="range" min="1" max="100" value="50" class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-xs text-slate-400">
+                                <span>暗空 (Bortle 1)</span>
+                                <span>城市 (Bortle 8)</span>
+                            </div>
+                        </div>
+                         <div class="text-center bg-slate-800 p-4 rounded-lg">
+                            <p class="text-slate-300">計算出的信噪比:</p>
+                            <p id="snr-value" class="text-4xl font-bold text-white"></p>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                         <div class="chart-container">
+                            <canvas id="snrChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Workflow Checklist -->
+        <section id="workflow">
+            <h2 class="text-2xl font-bold mb-2 text-center section-title">🛠️ 實戰工作流程清單</h2>
+            <p class="text-center text-slate-400 max-w-2xl mx-auto mb-8">這是您在野外的儀式。我們將報告中詳細的流程分解為幾個關鍵階段。點擊標籤頁以查看每個階段的詳細步驟，確保萬無一失。</p>
+
+            <div class="content-card rounded-xl p-6 md:p-8">
+                <div class="flex flex-wrap justify-center border-b border-slate-600 mb-6">
+                    <button class="tab-button py-2 px-4 rounded-t-lg font-semibold text-slate-300" data-tab="setup">1. 架設與平衡</button>
+                    <button class="tab-button py-2 px-4 rounded-t-lg font-semibold text-slate-300" data-tab="alignment">2. 校準</button>
+                    <button class="tab-button py-2 px-4 rounded-t-lg font-semibold text-slate-300" data-tab="capture">3. 對焦與拍攝</button>
+                    <button class="tab-button py-2 px-4 rounded-t-lg font-semibold text-slate-300" data-tab="calibration">4. 校準幀</button>
+                    <button class="tab-button py-2 px-4 rounded-t-lg font-semibold text-slate-300" data-tab="processing">5. 後期處理</button>
+                </div>
+
+                <div id="tab-content" class="text-slate-300">
+                    <!-- Setup & Balance -->
+                    <div class="tab-pane space-y-4" id="setup">
+                        <div class="bg-slate-800 p-4 rounded-lg flex items-start">
+                            <span class="text-2xl mr-4">1️⃣</span>
+                            <div><h4 class="font-bold">水平三腳架</h4><p class="text-sm text-slate-400">這是精確對極軸的基礎。不平的基座會導致高度和方位調整互相干擾。</p></div>
+                        </div>
+                         <div class="bg-slate-800 p-4 rounded-lg flex items-start">
+                            <span class="text-2xl mr-4">2️⃣</span>
+                            <div><h4 class="font-bold">平衡負載 (雙軸)</h4><p class="text-sm text-slate-400">先平衡赤緯軸，再平衡赤經軸。不平衡會嚴重影響追蹤精度，導致星點拖線。</p></div>
+                        </div>
+                         <div class="bg-slate-800 p-4 rounded-lg flex items-start">
+                            <span class="text-2xl mr-4">3️⃣</span>
+                            <div><h4 class="font-bold">「東邊重」微調</h4><p class="text-sm text-slate-400">完美平衡後，讓重錘側稍微重一點點，確保齒輪始終咬合，減少間隙。</p></div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-lg flex items-start">
+                            <span class="text-2xl mr-4">4️⃣</span>
+                            <div><h4 class="font-bold">安裝防結露帶</h4><p class="text-sm text-slate-400">在開始拍攝前就打開，輕微加熱鏡頭，防止水氣凝結毀掉您的作品。</p></div>
+                        </div>
+                    </div>
+                    <!-- Alignment -->
+                    <div class="tab-pane hidden space-y-4" id="alignment">
+                        <div class="bg-slate-800 p-4 rounded-lg flex items-start">
+                            <span class="text-2xl mr-4">🧭</span>
+                            <div><h4 class="font-bold">對極軸 (Polar Alignment)</h4><p class="text-sm text-slate-400">核心步驟！使用 SynScan Pro App，將極軸鏡中北極星的位置，調整到與 App 顯示完全一致。這是物理校準，決定了您能曝光多長時間。</p></div>
+                        </div>
+                        <div class="bg-slate-800 p-4 rounded-lg flex items-start">
+                            <span class="text-2xl mr-4">⭐</span>
+                            <div><h4 class="font-bold">星點校準 (Star Alignment)</h4><p class="text-sm text-slate-400">這是軟體校準，教導 GoTo 電腦認識天空。使用 SynScan Pro App 進行 1、2 或 3 星校準。這決定了 GoTo 指向的準確性，但無法彌補糟糕的對極軸。</p></div>
+                        </div>
+                    </div>
+                    <!-- Capture -->
+                    <div class="tab-pane hidden space-y-4" id="capture">
+                       <div class="bg-slate-800 p-4 rounded-lg flex items-start">
+                           <span class="text-2xl mr-4">🎯</span>
+                           <div><h4 class="font-bold">完美對焦</h4><p class="text-sm text-slate-400">必須手動對焦！使用 Live View 放大最亮的星，將其調到最小最銳利。強烈推薦使用「巴赫汀諾夫對焦罩」以獲得最高精度。對焦後用膠帶固定對焦環。</p></div>
+                       </div>
+                       <div class="bg-slate-800 p-4 rounded-lg">
+                           <h4 class="font-bold mb-2">相機設定 (ETTR 策略)</h4>
+                           <ul class="list-disc list-inside space-y-2 text-sm text-slate-400">
+                               <li><b>檔案格式:</b> 必須是 RAW (NEF)，14位元無損壓縮。</li>
+                               <li><b>白平衡:</b> 固定值，如「日光」。不要用自動 (AWB)。</li>
+                               <li><b>光圈:</b> 盡可能開到最大 (最低 f-stop)。</li>
+                               <li><b>ISO:</b> 對於您的相機，設定在 200-400 即可獲得最佳動態範圍和低噪訊。</li>
+                               <li><b>曝光時間:</b> 進行測試，找出在星點不拖線下的最長單張曝光時間。目標是讓直方圖的「駝峰」位於從左邊緣算起 1/4 到 1/3 的位置。</li>
+                               <li><b>機內降噪:</b> 全部關閉！ (長時間曝光降噪 & 高ISO降噪)。</li>
+                           </ul>
+                       </div>
+                    </div>
+                    <!-- Calibration Frames -->
+                    <div class="tab-pane hidden" id="calibration">
+                        <p class="mb-4 text-center text-slate-400">這不是可選步驟！跳過校準幀是新手失敗的最常見原因。</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left table-auto">
+                                <thead class="bg-slate-800 text-slate-300">
+                                    <tr>
+                                        <th class="p-3">類型</th>
+                                        <th class="p-3">目的</th>
+                                        <th class="p-3">設定</th>
+                                        <th class="p-3">數量</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="p-3 font-bold text-white">亮場 (Light)</td>
+                                        <td class="p-3">捕捉目標信號</td>
+                                        <td class="p-3">您的最佳ETTR設定</td>
+                                        <td class="p-3">越多越好 (>2小時)</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="p-3 font-bold text-white">暗場 (Dark)</td>
+                                        <td class="p-3">校正熱噪訊</td>
+                                        <td class="p-3">蓋上鏡頭蓋，<b>完全匹配</b>亮場設定 (ISO, 曝光, 溫度)</td>
+                                        <td class="p-3">20-50</td>
+                                    </tr>
+                                    <tr class="border-b border-slate-700">
+                                        <td class="p-3 font-bold text-white">平場 (Flat)</td>
+                                        <td class="p-3">校正暗角和灰塵</td>
+                                        <td class="p-3">對準均勻光源 (T恤法)，<b>匹配</b>亮場 (對焦, 光圈)，用Av模式獲取曝光</td>
+                                        <td class="p-3">25-50</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-white">暗平場 (Dark Flat)</td>
+                                        <td class="p-3">校準平場</td>
+                                        <td class="p-3">蓋上鏡頭蓋，<b>完全匹配</b>平場設定</td>
+                                        <td class="p-3">25-50</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Processing -->
+                    <div class="tab-pane hidden" id="processing">
+                       <p class="mb-6 text-center text-slate-400">推薦使用免費且功能強大的 Siril 軟體。這是一個簡化的工作流程。</p>
+                       <div class="space-y-2">
+                           <div class="flex items-center">
+                               <div class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">1</div>
+                               <div class="border-t-2 border-dashed border-slate-600 flex-grow mx-2"></div>
+                               <div class="bg-slate-800 p-3 rounded-lg flex-grow"><b>預處理腳本:</b> 在 Siril 中整理好檔案 (lights, darks, flats...)，運行 `OSC_Preprocessing` 腳本自動疊圖。</div>
+                           </div>
+                           <div class="flex items-center">
+                               <div class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">2</div>
+                               <div class="border-t-2 border-dashed border-slate-600 flex-grow mx-2"></div>
+                               <div class="bg-slate-800 p-3 rounded-lg flex-grow"><b>色彩校準:</b> 使用「光度色彩校準」工具，輸入目標名稱，讓軟體自動根據星點顏色校準您的影像。</div>
+                           </div>
+                           <div class="flex items-center">
+                               <div class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">3</div>
+                               <div class="border-t-2 border-dashed border-slate-600 flex-grow mx-2"></div>
+                               <div class="bg-slate-800 p-3 rounded-lg flex-grow"><b>背景提取:</b> 去除影像中殘餘的光害梯度。</div>
+                           </div>
+                           <div class="flex items-center">
+                               <div class="bg-blue-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">4</div>
+                               <div class="border-t-2 border-dashed border-slate-600 flex-grow mx-2"></div>
+                               <div class="bg-slate-800 p-3 rounded-lg flex-grow"><b>拉伸 (Stretching):</b> 使用 GHS 工具，將隱藏在黑暗中的星雲細節「拉」出來，同時保護亮部不過曝。</div>
+                           </div>
+                       </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Advanced Concepts -->
+        <section id="advanced-concepts">
+            <h2 class="text-2xl font-bold mb-2 text-center section-title">🌌 進階概念瀏覽器</h2>
+            <p class="text-center text-slate-400 max-w-2xl mx-auto mb-8">當您掌握了基礎後，這些技術將讓您的作品更上一層樓。點擊卡片以了解更多。</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="advanced-card content-card rounded-xl p-6 cursor-pointer" data-concept="autoguiding">
+                    <h3 class="font-bold text-lg text-blue-400">自動導星</h3>
+                    <p class="text-sm mt-2 text-slate-400">實時修正赤道儀的追蹤誤差，是使用 600mm 長焦鏡頭獲得清晰星點的關鍵。</p>
+                </div>
+                 <div class="advanced-card content-card rounded-xl p-6 cursor-pointer" data-concept="dithering">
+                    <h3 class="font-bold text-lg text-blue-400">抖動 (Dithering)</h3>
+                    <p class="text-sm mt-2 text-slate-400">在每張曝光間微移望遠鏡，能極大地消除固定模式噪訊（如條紋），產生更平滑的背景。</p>
+                </div>
+                 <div class="advanced-card content-card rounded-xl p-6 cursor-pointer" data-concept="filters">
+                    <h3 class="font-bold text-lg text-blue-400">窄帶濾鏡</h3>
+                    <p class="text-sm mt-2 text-slate-400">配合改裝 D5100 使用，可有效對抗光害和月光，拍出高對比度的發射星雲。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 mt-12 py-8">
+        <div class="container mx-auto px-4 text-center text-slate-400 text-sm">
+            <p>根據您提供的《現代數位單反天文攝影師手冊》報告生成。</p>
+            <p class="mt-2">祝您觀星愉快，晴空萬里！</p>
+        </div>
+    </footer>
+
+    <!-- Modal for Advanced Concepts -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden items-center justify-center p-4">
+        <div id="modal-content" class="bg-slate-800 rounded-xl p-8 max-w-2xl w-full relative">
+            <button id="modal-close" class="absolute top-4 right-4 text-slate-400 hover:text-white">&times;</button>
+            <h3 id="modal-title" class="text-2xl font-bold text-blue-400 mb-4"></h3>
+            <div id="modal-body" class="text-slate-300 space-y-4"></div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gearAdvisor = {
+                select: document.getElementById('target-type'),
+                cameraRec: document.getElementById('camera-rec'),
+                cameraReason: document.getElementById('camera-reason'),
+                lensRec: document.getElementById('lens-rec'),
+                lensReason: document.getElementById('lens-reason'),
+                data: {
+                    emission_nebula: {
+                        camera: '改裝版 D5100',
+                        cameraReason: '關鍵優勢！對發射星雲主要的 H-alpha 紅光有極高靈敏度，能捕捉到未改裝相機看不到的細節。',
+                        lens: 'Tamron 70-210mm 或 Sigma 150-600mm',
+                        lensReason: '根據星雲大小選擇。70-210mm 適合大型目標 (如北美洲星雲)，150-600mm 適合較小目標 (如鷹星雲)。'
+                    },
+                    broadband_galaxy: {
+                        camera: 'Nikon D500',
+                        cameraReason: '更優選擇！具有更低的噪訊和更高的動態範圍，能更好地保留星系自然的色彩和亮部核心的細節。',
+                        lens: 'Sigma 150-600mm 或 Tamron 70-210mm',
+                        lensReason: '600mm 可挑戰 M51, M81/82 等較小星系。210mm 非常適合拍攝巨大的仙女座大星系 (M31)。'
+                    },
+                    broadband_cluster: {
+                        camera: 'Nikon D500',
+                        cameraReason: '最佳選擇！色彩保真度更高，能呈現星團中恆星的真實顏色。低噪訊對乾淨的背景至關重要。',
+                        lens: 'Tamron 70-210mm',
+                        lensReason: '此焦段非常適合構圖像 M45 昴宿星團這樣的大型疏散星團。'
+                    },
+                    wide_field: {
+                        camera: 'Nikon D500',
+                        cameraReason: '優勢明顯。D500 的現代感光元件在處理大片星空時噪訊表現更好。',
+                        lens: 'Sigma 18-35mm f/1.8',
+                        lensReason: '這是您的廣角利器，非常適合捕捉壯麗的銀河或整個星座。'
+                    }
+                },
+                update() {
+                    const selection = this.select.value;
+                    const rec = this.data[selection];
+                    this.cameraRec.textContent = rec.camera;
+                    this.cameraReason.textContent = rec.cameraReason;
+                    this.lensRec.textContent = rec.lens;
+                    this.lensReason.textContent = rec.lensReason;
+                }
+            };
+
+            const snrSimulator = {
+                exposureSlider: document.getElementById('exposure-count'),
+                skyGlowSlider: document.getElementById('sky-glow'),
+                exposureLabel: document.getElementById('exposure-count-label'),
+                snrValue: document.getElementById('snr-value'),
+                chart: null,
+                init() {
+                    const ctx = document.getElementById('snrChart').getContext('2d');
+                    this.chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['微弱細節', '中間調', '亮部核心'],
+                            datasets: [{
+                                label: '目標信號',
+                                data: [],
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                                fill: true,
+                                tension: 0.4
+                            }, {
+                                label: '總噪訊',
+                                data: [],
+                                borderColor: '#ef4444',
+                                backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                                fill: true,
+                                tension: 0.4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: { color: '#94a3b8' },
+                                    grid: { color: 'rgba(100, 116, 139, 0.2)'}
+                                },
+                                x: {
+                                    ticks: { color: '#94a3b8' },
+                                    grid: { color: 'rgba(100, 116, 139, 0.2)'}
+                                }
+                            },
+                            plugins: {
+                                legend: { labels: { color: '#e2e8f0' } }
+                            }
+                        }
+                    });
+                    this.update();
+                },
+                update() {
+                    const exposures = parseInt(this.exposureSlider.value);
+                    const skyGlow = parseInt(this.skyGlowSlider.value);
+                    this.exposureLabel.textContent = exposures;
+
+                    const baseSignal = 20;
+                    const objectFlux = baseSignal * exposures;
+                    const shotNoise = Math.sqrt(objectFlux);
+                    const readNoise = 5 * Math.sqrt(exposures); 
+                    const thermalNoise = 2 * exposures;
+                    const skyFogSignal = skyGlow * exposures;
+                    const skyFogNoise = Math.sqrt(skyFogSignal);
+
+                    const totalSignal = objectFlux;
+                    const totalNoise = Math.sqrt(shotNoise**2 + readNoise**2 + thermalNoise**2 + skyFogNoise**2);
+                    
+                    const snr = totalSignal / totalNoise;
+                    this.snrValue.textContent = snr.toFixed(2);
+                    
+                    this.chart.data.datasets[0].data = [totalSignal * 0.2, totalSignal * 0.6, totalSignal];
+                    this.chart.data.datasets[1].data = [totalNoise, totalNoise * 1.2, totalNoise * 1.1];
+                    this.chart.update();
+                }
+            };
+            
+            const workflowTabs = {
+                buttons: document.querySelectorAll('.tab-button'),
+                panes: document.querySelectorAll('.tab-pane'),
+                init() {
+                    this.buttons.forEach(button => {
+                        button.addEventListener('click', () => this.activate(button));
+                    });
+                    this.activate(this.buttons[0]);
+                },
+                activate(activeButton) {
+                    const tabId = activeButton.dataset.tab;
+                    this.buttons.forEach(button => {
+                        button.classList.toggle('active', button === activeButton);
+                    });
+                    this.panes.forEach(pane => {
+                        pane.classList.toggle('hidden', pane.id !== tabId);
+                    });
+                }
+            };
+
+            const advancedConceptsModal = {
+                cards: document.querySelectorAll('.advanced-card'),
+                modal: document.getElementById('modal'),
+                modalContent: document.getElementById('modal-content'),
+                modalClose: document.getElementById('modal-close'),
+                modalTitle: document.getElementById('modal-title'),
+                modalBody: document.getElementById('modal-body'),
+                data: {
+                    autoguiding: {
+                        title: '自動導星 (Autoguiding)',
+                        body: `<p>即使對極軸再完美，赤道儀的齒輪也存在微小的「週期性誤差」(PE)，會導致長時間曝光下的星點漂移。自動導星就是為了解決這個問題。</p>
+                               <ul class="list-disc list-inside mt-2 space-y-2">
+                                <li><b>原理：</b>使用一個小型的導星鏡和導星相機鎖定一顆參考星，透過 PHD2 等軟體實時偵測其漂移，並向赤道儀發送微小的修正指令，將其「拉」回原位。</li>
+                                <li><b>為何重要：</b>對於在 Star Adventurer GTi 上使用 150-600mm 鏡頭進行長焦拍攝，這幾乎是必需品。它能讓您的單張曝光時間從 1-2 分鐘大幅提升至 5 分鐘甚至更長，獲得更清晰、更圓潤的星點。</li>
+                                <li><b>基本裝備：</b>小型導星鏡 (如 30mm f/4)、入門導星相機 (如 ZWO ASI120MM Mini)、PHD2 軟體。</li>
+                               </ul>`
+                    },
+                    dithering: {
+                        title: '抖動 (Dithering)',
+                        body: `<p>抖動是提升DSLR影像品質最強大的技術之一，堪稱「神奇的降噪器」。</p>
+                               <ul class="list-disc list-inside mt-2 space-y-2">
+                                <li><b>原理：</b>在每張亮場曝光之間，透過軟體（如 N.I.N.A. 或與 PHD2 結合）指令赤道儀隨機地、微小地移動幾個像素。</li>
+                                <li><b>效果：</b>這樣做能確保相機感光元件的固定模式噪訊（如熱點、冷點、條紋）不會落在每張影像的同一個位置。在後期疊圖時，軟體的排斥算法（如 Sigma Clipping）就能非常有效地識別並移除這些噪點，從而得到一個極其平滑、乾淨的背景。</li>
+                                <li><b>無導星抖動：</b>即使沒有自動導星，也可以透過 N.I.N.A. 等軟體直接連接 GTi 赤道儀實現「脈衝抖動」。</li>
+                               </ul>`
+                    },
+                    filters: {
+                        title: '窄帶濾鏡 (Narrowband Filters)',
+                        body: `<p>這是您改裝 D5100 的終極武器，能讓您在光害嚴重的城市或月光下進行拍攝。</p>
+                               <ul class="list-disc list-inside mt-2 space-y-2">
+                                <li><b>原理：</b>雙窄帶濾鏡（如 Optolong L-eNhance/L-eXtreme）會阻擋絕大部分的可見光譜（包括鈉燈、LED造成的光害），只允許特定的 H-alpha（紅色）和 OIII（藍綠色）波長通過。</li>
+                                <li><b>適用對象：</b>這些濾鏡<b>僅</b>對發射星雲有效！因為星雲正是在這些特定波長發光。對星系、星團等寬頻目標使用會濾掉幾乎所有信號。</li>
+                                <li><b>效果：</b>極大地提高了目標信號與天空背景信號的對比度，讓您在惡劣條件下也能拍出高品質的星雲照片。</li>
+                               </ul>`
+                    }
+                },
+                init() {
+                    this.cards.forEach(card => {
+                        card.addEventListener('click', () => {
+                            const concept = card.dataset.concept;
+                            this.open(concept);
+                        });
+                    });
+                    this.modalClose.addEventListener('click', () => this.close());
+                    this.modal.addEventListener('click', (e) => {
+                        if (e.target === this.modal) this.close();
+                    });
+                },
+                open(concept) {
+                    const content = this.data[concept];
+                    this.modalTitle.textContent = content.title;
+                    this.modalBody.innerHTML = content.body;
+                    this.modal.classList.remove('hidden');
+                    this.modal.classList.add('flex');
+                },
+                close() {
+                    this.modal.classList.add('hidden');
+                    this.modal.classList.remove('flex');
+                }
+            };
+
+            gearAdvisor.select.addEventListener('change', () => gearAdvisor.update());
+            gearAdvisor.update();
+
+            snrSimulator.exposureSlider.addEventListener('input', () => snrSimulator.update());
+            snrSimulator.skyGlowSlider.addEventListener('input', () => snrSimulator.update());
+            snrSimulator.init();
+            
+            workflowTabs.init();
+
+            advancedConceptsModal.init();
+        });
+    </script>
+</body>
+</html>
