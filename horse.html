@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動式香港賽馬投注指南</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Warm Neutrals with Muted Green Accent) -->
+    <!-- Application Structure Plan: A task-oriented, single-page application featuring a sticky top navigation for seamless movement between key thematic sections: 'Welcome', 'Pool Decoder', 'Race Analysis', 'Betting Strategy', and 'Practical Guide'. This non-linear structure prioritizes user exploration over the report's original chapter flow. Key interactions include a tabbed interface for exploring bet types, an interactive virtual race card for contextual learning, and a dynamic bet cost calculator. This design was chosen to transform passive reading into an active, engaging learning experience, allowing users to quickly access the tools and information most relevant to their needs. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Takeout Rates (Ch 1) -> Goal: Compare -> Viz: Horizontal Bar Chart (Chart.js) -> Interaction: Hover for details -> Justification: Provides immediate visual comparison of bet "costs".
+        - Report Info: Pool Types (Ch 2, 3) -> Goal: Organize/Inform -> Viz: Tabbed Cards (HTML/Tailwind) -> Interaction: Click to expand details with HTML/CSS diagrams -> Justification: Breaks down complex information into manageable, interactive chunks.
+        - Report Info: Race Card Data (Ch 4) -> Goal: Organize/Inform -> Viz: HTML Race Card Replica -> Interaction: Click key terms for popup explanations -> Justification: Contextualizes learning by linking data points directly to their meaning.
+        - Report Info: Bet Combinations (Ch 3) -> Goal: Inform/Calculate -> Viz: Interactive Form -> Interaction: User inputs parameters, JS calculates cost -> Justification: Makes abstract combination costs tangible and practical.
+        - Report Info: Betting Process (Ch 6) -> Goal: Organize -> Viz: HTML/CSS Flowchart -> Interaction: Static Visual Guide -> Justification: Simplifies a text-heavy process into a scannable, appealing format.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; }
+        .active-nav { color: #ffffff; background-color: #347474; }
+        .inactive-nav { color: #374151; background-color: #f0f0f0; }
+        .section-fade-in { animation: fadeIn 0.8s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 400px; max-height: 50vh; }
+        @media (min-width: 768px) { .chart-container { height: 500px; } }
+    </style>
+</head>
+<body class="bg-amber-50 text-gray-800">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-3">
+                <h1 class="text-xl md:text-2xl font-bold text-[#347474]">賽馬投注互動指南</h1>
+                <div class="hidden md:flex items-center space-x-2">
+                    <a href="#welcome" class="nav-link px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300">歡迎</a>
+                    <a href="#pools" class="nav-link px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300">彩池解碼</a>
+                    <a href="#analysis" class="nav-link px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300">賽事分析</a>
+                    <a href="#strategy" class="nav-link px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300">投注策略</a>
+                    <a href="#guide" class="nav-link px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300">實戰指南</a>
+                </div>
+                <div class="md:hidden">
+                    <select id="mobile-nav" class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#347474] focus:border-[#347474] block w-full p-2.5">
+                        <option value="#welcome">歡迎</option>
+                        <option value="#pools">彩池解碼</option>
+                        <option value="#analysis">賽事分析</option>
+                        <option value="#strategy">投注策略</option>
+                        <option value="#guide">實戰指南</option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8 space-y-16">
+        
+        <section id="welcome" class="text-center section-fade-in">
+            <h2 class="text-3xl md:text-4xl font-bold text-[#347474] mb-4">歡迎來到互動式香港賽馬投注指南</h2>
+            <p class="max-w-3xl mx-auto text-gray-600 mb-6">
+                本指南旨在將複雜的香港賽馬投注世界，轉化為一個清晰、互動且易於理解的學習體驗。無論您是新手還是希望深化知識的馬迷，這裡都提供了您需要的工具與資訊。請透過上方導覽列探索不同主題，從解構各類彩池到學習專業的賽事分析技巧。
+            </p>
+            <div class="p-6 bg-white/60 rounded-xl shadow-lg border border-gray-200 inline-block">
+                <h3 class="text-xl font-semibold text-gray-700 mb-3">核心概念：同注分彩 (Pari-Mutuel)</h3>
+                <p class="text-sm text-gray-600 max-w-xl mx-auto">
+                    香港賽馬的核心是「同注分彩」制度。您的投注金額會與其他人的投注匯集到一個共同彩池。馬會從中扣除稅項和手續費後，餘額由所有中獎者按投注額比例分享。這意味著賠率是浮動的，直到投注截止才最終確定。
+                </p>
+            </div>
+        </section>
+
+        <section id="pools" class="section-fade-in">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[#347474] mb-2">彩池解碼</h2>
+                <p class="text-gray-600">點擊下方的彩池類型，深入了解其規則、玩法和策略。</p>
+            </div>
+            
+            <div id="pool-tabs" class="mb-6 flex flex-wrap justify-center gap-2">
+                <button data-pool="獨贏" class="pool-tab-btn active-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">獨贏 Win</button>
+                <button data-pool="位置" class="pool-tab-btn inactive-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">位置 Place</button>
+                <button data-pool="連贏" class="pool-tab-btn inactive-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">連贏 Quinella</button>
+                <button data-pool="位置Q" class="pool-tab-btn inactive-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">位置Q Quinella Place</button>
+                <button data-pool="二重彩" class="pool-tab-btn inactive-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">二重彩 Forecast</button>
+                <button data-pool="單T" class="pool-tab-btn inactive-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">單T Trio</button>
+                <button data-pool="三重彩" class="pool-tab-btn inactive-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">三重彩 Tierce</button>
+                <button data-pool="四連環" class="pool-tab-btn inactive-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">四連環 First 4</button>
+                <button data-pool="四重彩" class="pool-tab-btn inactive-nav px-4 py-2 text-sm font-semibold rounded-full shadow-sm">四重彩 Quartet</button>
+            </div>
+
+            <div id="pool-details" class="bg-white rounded-xl shadow-lg p-6 md:p-8 border border-gray-200 min-h-[300px] transition-all duration-500">
+            </div>
+        </section>
+
+        <section id="analysis" class="section-fade-in">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[#347474] mb-2">賽事分析：解讀排位表</h2>
+                <p class="text-gray-600">排位表是賽事分析的核心。點擊下方虛擬排位表中的<span class="text-[#347474] font-bold">綠色高亮</span>項目，查看其代表的意義。</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-4 md:p-6 border border-gray-200 overflow-x-auto">
+                <div class="min-w-[700px]">
+                    <div class="grid grid-cols-12 gap-2 text-center font-bold text-xs text-gray-500 pb-2 border-b-2 border-gray-300">
+                        <div>馬號</div><div>馬名</div><div>近績</div><div class="analysis-term cursor-pointer text-[#347474]">負磅</div><div class="analysis-term cursor-pointer text-[#347474]">騎師</div><div class="analysis-term cursor-pointer text-[#347474]">檔位</div><div>評分</div><div class="analysis-term cursor-pointer text-[#347474]">練馬師</div><div class="analysis-term cursor-pointer text-[#347474]">配備</div><div>父系</div><div>母系</div><div>最佳時間</div>
+                    </div>
+                    <div class="grid grid-cols-12 gap-2 text-center text-sm items-center py-3 border-b border-gray-200">
+                        <div class="font-bold">1</div>
+                        <div class="font-semibold">金鎗六十</div>
+                        <div>1-1-1-2-1-1</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">135</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">何澤堯</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">2</div>
+                        <div>130</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">呂健威</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">--</div>
+                        <div>Medaglia d'Oro</div>
+                        <div>Gaudeamus</div>
+                        <div>1.32.95</div>
+                    </div>
+                     <div class="grid grid-cols-12 gap-2 text-center text-sm items-center py-3 border-b border-gray-200">
+                        <div class="font-bold">2</div>
+                        <div class="font-semibold">浪漫勇士</div>
+                        <div>2-3-1-1-4-1</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">133</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">麥道朗</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">7</div>
+                        <div>128</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">沈集成</div>
+                        <div class="analysis-term cursor-pointer text-[#347474]">B1</div>
+                        <div>Acclamation</div>
+                        <div>Folk Melody</div>
+                        <div>1.59.23</div>
+                    </div>
+                </div>
+            </div>
+            <div id="analysis-explanation" class="mt-4 p-4 bg-teal-50 border-l-4 border-[#347474] rounded-r-lg text-gray-700 hidden">
+            </div>
+        </section>
+
+        <section id="strategy" class="section-fade-in">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[#347474] mb-2">投注策略</h2>
+                <p class="text-gray-600">成功的投注不僅靠運氣，更需要策略。這裡將探討投注成本、組合技巧和資金管理。</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+                    <h3 class="font-bold text-xl text-center mb-4 text-gray-700">彩池抽水率 (投注成本) 比較</h3>
+                    <div class="chart-container">
+                        <canvas id="takeoutRateChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+                    <h3 class="font-bold text-xl text-center mb-4 text-gray-700">投注組合成本計算機</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="calc-pool" class="block mb-2 text-sm font-medium text-gray-900">選擇彩池</label>
+                            <select id="calc-pool" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#347474] focus:border-[#347474] block w-full p-2.5">
+                                <option value="2" data-name="連贏">連贏 (選2匹)</option>
+                                <option value="3" data-name="單T">單T (選3匹)</option>
+                                <option value="4" data-name="四連環">四連環 (選4匹)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="calc-horses" class="block mb-2 text-sm font-medium text-gray-900">選擇馬匹總數</label>
+                            <input type="number" id="calc-horses" value="5" min="2" max="14" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#347474] focus:border-[#347474] block w-full p-2.5">
+                        </div>
+                        <div>
+                            <label for="calc-bankers" class="block mb-2 text-sm font-medium text-gray-900">馬膽數量 (0為複式)</label>
+                            <input type="number" id="calc-bankers" value="0" min="0" max="3" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-[#347474] focus:border-[#347474] block w-full p-2.5">
+                        </div>
+                    </div>
+                    <div id="calc-result" class="mt-6 text-center p-4 bg-amber-100 rounded-lg">
+                        <p class="font-semibold text-gray-800">請輸入參數進行計算</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="guide" class="section-fade-in">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[#347474] mb-2">實戰指南：完整投注流程</h2>
+                <p class="text-gray-600">從分析到下注，這是一個簡單的分步指南。</p>
+            </div>
+            <div class="max-w-4xl mx-auto">
+                <div class="relative">
+                    <div class="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gray-300" aria-hidden="true"></div>
+                    <div class="space-y-12">
+                        <div class="flex items-center">
+                            <div class="w-1/2 pr-8 text-right">
+                                <div class="bg-white p-4 rounded-lg shadow-md border">
+                                    <h4 class="font-bold text-[#347474]">第一步：賽事分析</h4>
+                                    <p class="text-sm text-gray-600">利用排位表、往績和專業貼士，評估馬匹狀態、騎練組合及場地因素。</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 bg-[#347474] rounded-full flex items-center justify-center text-white font-bold z-10">1</div>
+                            <div class="w-1/2 pl-8"></div>
+                        </div>
+                        <div class="flex items-center">
+                             <div class="w-1/2 pr-8"></div>
+                            <div class="w-10 h-10 bg-[#347474] rounded-full flex items-center justify-center text-white font-bold z-10">2</div>
+                            <div class="w-1/2 pl-8 text-left">
+                                <div class="bg-white p-4 rounded-lg shadow-md border">
+                                    <h4 class="font-bold text-[#347474]">第二步：制定策略</h4>
+                                    <p class="text-sm text-gray-600">根據信心和風險偏好選擇合適彩池。利用複式或膽拖組合來平衡成本與機會。</p>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="flex items-center">
+                            <div class="w-1/2 pr-8 text-right">
+                                <div class="bg-white p-4 rounded-lg shadow-md border">
+                                    <h4 class="font-bold text-[#347474]">第三步：下注</h4>
+                                    <p class="text-sm text-gray-600">可透過馬會流動應用程式、網站、電話投注或親臨投注站下注。</p>
+                                </div>
+                            </div>
+                            <div class="w-10 h-10 bg-[#347474] rounded-full flex items-center justify-center text-white font-bold z-10">3</div>
+                            <div class="w-1/2 pl-8"></div>
+                        </div>
+                        <div class="flex items-center">
+                             <div class="w-1/2 pr-8"></div>
+                            <div class="w-10 h-10 bg-[#347474] rounded-full flex items-center justify-center text-white font-bold z-10">4</div>
+                            <div class="w-1/2 pl-8 text-left">
+                                <div class="bg-white p-4 rounded-lg shadow-md border">
+                                    <h4 class="font-bold text-[#347474]">第四步：核對及領獎</h4>
+                                    <p class="text-sm text-gray-600">賽後核對賽果。戶口投注會自動派彩，實體票需在60天內兌獎。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-8 py-6 text-center text-sm">
+            <p>&copy; 2025 互動式香港賽馬投注指南。僅供參考及學習之用。</p>
+            <p>投注必須年滿十八歲。切勿沉迷賭博。</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const poolData = {
+                '獨贏': {
+                    title: '獨贏 (Win)',
+                    description: '最直接的玩法，目標是準確選中一場賽事中的第1名馬匹。',
+                    strategy: '適合對某一匹馬有極高信心時使用，是將判斷轉化為回報的最直接方式。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">1</div><div class="w-12 h-20 bg-gray-300 rounded-t-lg">2</div><div class="w-12 h-16 bg-gray-300 rounded-t-lg">3</div></div>'
+                },
+                '位置': {
+                    title: '位置 (Place)',
+                    description: '降低風險的選擇。選中的馬匹跑入前列位置即可獲派彩。7匹或以上馬參賽，跑入前三名即中；4-6匹馬參賽，跑入前兩名即中。',
+                    strategy: '適合在形勢不明朗，或對馬匹跑入三甲有信心但對奪冠無把握時採用。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">1</div><div class="w-12 h-20 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">2</div><div class="w-12 h-16 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">3</div></div>'
+                },
+                '連贏': {
+                    title: '連贏 (Quinella)',
+                    description: '需選中一場賽事中的第1名及第2名馬匹，無需順序。',
+                    strategy: '當您能判斷出賽事中實力最強的兩匹馬，但對牠們的衝線次序沒有把握時的最佳選擇。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">1</div><div class="w-12 h-20 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">2</div><div class="w-12 h-16 bg-gray-300 rounded-t-lg">3</div></div><p class="text-sm mt-2 text-center text-gray-500">毋須順序</p>'
+                },
+                '位置Q': {
+                    title: '位置Q (Quinella Place)',
+                    description: '選中一場賽事中頭三名馬匹中的任何兩匹，無需順序。一注包括三種中獎可能 (1&2, 1&3, 2&3)。',
+                    strategy: '極具彈性，是賽事有多匹馬實力接近、難分高下時，覆蓋多種賽果的理想工具。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">1</div><div class="w-12 h-20 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">2</div><div class="w-12 h-16 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">3</div></div><p class="text-sm mt-2 text-center text-gray-500">選中任何兩匹，毋須順序</p>'
+                },
+                '二重彩': {
+                    title: '二重彩 (Forecast)',
+                    description: '需要「順序」選中一場賽事中的第1名及第2名馬匹。',
+                    strategy: '難度高於連贏，但派彩通常也遠高於連贏。適合對賽事前兩名的馬匹和名次都有準確判斷時使用。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">1</div><div class="w-12 h-20 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">2</div><div class="w-12 h-16 bg-gray-300 rounded-t-lg">3</div></div><p class="text-sm mt-2 text-center text-gray-500">需要順序</p>'
+                },
+                '單T': {
+                    title: '單T (Trio)',
+                    description: '需要選中一場賽事中的第1、第2及第3名馬匹，無需順序。',
+                    strategy: '熱門的「奇趣」彩池。當您判斷出三匹馬實力超群，但牠們之間的名次難料時的最佳選擇。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">1</div><div class="w-12 h-20 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">2</div><div class="w-12 h-16 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">3</div></div><p class="text-sm mt-2 text-center text-gray-500">毋須順序</p>'
+                },
+                '三重彩': {
+                    title: '三重彩 (Tierce)',
+                    description: '需要「順序」選中一場賽事中的第1、第2及第3名馬匹。',
+                    strategy: '難度極高，但潛在回報巨大。適合在有信心預測前三名精確次序，或以小博大時採用。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">1</div><div class="w-12 h-20 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">2</div><div class="w-12 h-16 bg-green-500 rounded-t-lg flex items-center justify-center text-white font-bold">3</div></div><p class="text-sm mt-2 text-center text-gray-500">需要順序</p>'
+                },
+                '四連環': {
+                    title: '四連環 (First 4)',
+                    description: '需要選中一場賽事中的第1、第2、第3及第4名馬匹，無需順序。',
+                    strategy: '高難度彩池，但無需排序降低了門檻。適合賽事形勢混亂、有望爆冷時，用複式或膽拖捕捉意外賽果。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg">1</div><div class="w-12 h-20 bg-green-500 rounded-t-lg">2</div><div class="w-12 h-16 bg-green-500 rounded-t-lg">3</div><div class="w-12 h-12 bg-green-500 rounded-t-lg">4</div></div><p class="text-sm mt-2 text-center text-gray-500">毋須順序</p>'
+                },
+                '四重彩': {
+                    title: '四重彩 (Quartet)',
+                    description: '單場投注的終極挑戰，需要「順序」選中第1、第2、第3及第4名馬匹。',
+                    strategy: '難度最高，派彩潛力最大。通常以膽拖方式投注，以有限成本追逐巨額回報。',
+                    diagram: '<div class="flex justify-center items-end space-x-2 h-24"><div class="w-12 h-24 bg-green-500 rounded-t-lg">1</div><div class="w-12 h-20 bg-green-500 rounded-t-lg">2</div><div class="w-12 h-16 bg-green-500 rounded-t-lg">3</div><div class="w-12 h-12 bg-green-500 rounded-t-lg">4</div></div><p class="text-sm mt-2 text-center text-gray-500">需要順序</p>'
+                },
+            };
+
+            const analysisExplanations = {
+                '負磅': '馬匹需承擔的總重量，由其官方評分決定。評分越高的馬，負磅越重，這是香港讓磅賽制度的核心，旨在平衡馬匹實力。',
+                '騎師': '策騎馬匹的騎師。頂級騎師的經驗、戰術執行力和近期狀態是影響賽果的重要人為因素。',
+                '檔位': '馬匹起步的出閘位置。在跑馬地或沙田短途賽事，內側檔位（1-4檔）因能節省腳程而具備明顯優勢。',
+                '練馬師': '負責訓練馬匹的練馬師。每位練馬師都有自己的訓練風格和作戰部署，了解其習性有助於預判。',
+                '配備': '馬匹佩戴的輔助裝備，如眼罩(B)、舌帶(TT)等。配備的首次佩戴(B1)或變更，常是練馬師意圖改變馬匹表現的信號。'
+            };
+
+            const poolDetailsContainer = document.getElementById('pool-details');
+            const poolTabButtons = document.querySelectorAll('.pool-tab-btn');
+
+            function updatePoolDetails(poolName) {
+                const data = poolData[poolName];
+                if (data) {
+                    poolDetailsContainer.innerHTML = `
+                        <h3 class="text-2xl font-bold text-[#347474] mb-3">${data.title}</h3>
+                        <div class="grid md:grid-cols-2 gap-6 items-center">
+                            <div>
+                                <p class="text-gray-600 mb-4">${data.description}</p>
+                                <p class="text-sm bg-amber-100 p-3 rounded-lg"><span class="font-bold">策略提示：</span>${data.strategy}</p>
+                            </div>
+                            <div class="hidden md:block">
+                                ${data.diagram}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            poolTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    poolTabButtons.forEach(btn => {
+                        btn.classList.remove('active-nav');
+                        btn.classList.add('inactive-nav');
+                    });
+                    button.classList.add('active-nav');
+                    button.classList.remove('inactive-nav');
+                    updatePoolDetails(button.dataset.pool);
+                });
+            });
+
+            updatePoolDetails('獨贏');
+
+            const analysisTerms = document.querySelectorAll('.analysis-term');
+            const explanationBox = document.getElementById('analysis-explanation');
+            
+            analysisTerms.forEach(term => {
+                term.addEventListener('click', () => {
+                    const termKey = term.textContent;
+                    if (analysisExplanations[termKey]) {
+                        explanationBox.innerHTML = `<p><span class="font-bold">${termKey}:</span> ${analysisExplanations[termKey]}</p>`;
+                        explanationBox.classList.remove('hidden');
+                    }
+                });
+            });
+
+            const takeoutCtx = document.getElementById('takeoutRateChart').getContext('2d');
+            new Chart(takeoutCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['獨贏/位置/連贏/位置Q', '二重彩', '單T', '三重彩/四連環/四重彩'],
+                    datasets: [{
+                        label: '馬會抽水率 (%)',
+                        data: [17.5, 19.5, 23.0, 25.0],
+                        backgroundColor: [
+                            'rgba(52, 116, 116, 0.6)',
+                            'rgba(245, 158, 11, 0.6)',
+                            'rgba(239, 68, 68, 0.6)',
+                            'rgba(107, 114, 128, 0.6)'
+                        ],
+                        borderColor: [
+                            '#347474',
+                            '#F59E0B',
+                            '#EF4444',
+                            '#6B7280'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: false },
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.x !== null) {
+                                        label += context.parsed.x + '%';
+                                    }
+                                    return label;
+                                },
+                                afterLabel: function(context) {
+                                    const takeout = context.parsed.x;
+                                    const rtp = 100 - takeout;
+                                    return `返還率: ${rtp.toFixed(1)}%`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: '抽水率 (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            const calcPool = document.getElementById('calc-pool');
+            const calcHorses = document.getElementById('calc-horses');
+            const calcBankers = document.getElementById('calc-bankers');
+            const calcResult = document.getElementById('calc-result');
+
+            function factorial(n) {
+                return n ? n * factorial(n - 1) : 1;
+            }
+
+            function combinations(n, k) {
+                if (k < 0 || k > n) {
+                    return 0;
+                }
+                return factorial(n) / (factorial(k) * factorial(n - k));
+            }
+
+            function calculateBetCost() {
+                const poolSize = parseInt(calcPool.value);
+                const totalHorses = parseInt(calcHorses.value);
+                const numBankers = parseInt(calcBankers.value);
+                const poolName = calcPool.options[calcPool.selectedIndex].dataset.name;
+                
+                if (numBankers >= poolSize) {
+                    calcResult.innerHTML = `<p class="font-semibold text-red-600">錯誤：馬膽數量必須少於彩池要求馬匹數 (${poolSize})。</p>`;
+                    return;
+                }
+                if (totalHorses <= numBankers) {
+                    calcResult.innerHTML = `<p class="font-semibold text-red-600">錯誤：馬匹總數必須多於馬膽數量。</p>`;
+                    return;
+                }
+                if (totalHorses < poolSize) {
+                     calcResult.innerHTML = `<p class="font-semibold text-red-600">錯誤：馬匹總數必須大於或等於彩池要求馬匹數 (${poolSize})。</p>`;
+                    return;
+                }
+
+                const numLegs = totalHorses - numBankers;
+                const legsToChoose = poolSize - numBankers;
+                
+                if (numLegs < legsToChoose) {
+                    calcResult.innerHTML = `<p class="font-semibold text-red-600">錯誤：配腳數量不足以組成有效注項。</p>`;
+                    return;
+                }
+
+                const numCombinations = combinations(numLegs, legsToChoose);
+                const cost = numCombinations * 10;
+                
+                let betType = (numBankers > 0) ? `${numBankers}膽 ${numLegs}腳` : '複式';
+                
+                calcResult.innerHTML = `
+                    <p class="text-sm text-gray-700">${poolName} - ${betType}</p>
+                    <p class="text-2xl font-bold text-[#347474] my-1">${numCombinations} 注</p>
+                    <p class="text-sm text-gray-700">標準十元一注成本: <span class="font-bold">$${cost}</span></p>
+                    <p class="text-xs text-gray-500 mt-2">提示：「靈活玩」可讓您自訂總投注額。</p>
+                `;
+            }
+
+            [calcPool, calcHorses, calcBankers].forEach(el => {
+                el.addEventListener('input', calculateBetCost);
+            });
+            calculateBetCost();
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const mobileNav = document.getElementById('mobile-nav');
+
+            function smoothScroll(targetId) {
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, 
+                        behavior: 'smooth'
+                    });
+                }
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', e => {
+                    e.preventDefault();
+                    const targetId = e.currentTarget.getAttribute('href');
+                    smoothScroll(targetId);
+                });
+            });
+            
+            mobileNav.addEventListener('change', e => {
+                const targetId = e.target.value;
+                smoothScroll(targetId);
+            });
+            
+            const sections = document.querySelectorAll('section');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        document.querySelectorAll('.nav-link').forEach(link => {
+                           link.classList.remove('active-nav', 'inactive-nav');
+                           if(link.getAttribute('href') === `#${id}`) {
+                               link.classList.add('active-nav');
+                           } else {
+                               link.classList.add('inactive-nav');
+                           }
+                        });
+                        mobileNav.value = `#${id}`;
+                    }
+                });
+            }, { rootMargin: "-100px 0px -50% 0px" });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+        });
+    </script>
+
+</body>
+</html>
