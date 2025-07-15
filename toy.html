@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Basketball Betting Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral Harmony -->
+    <!-- Application Structure Plan: A tabbed, single-page dashboard. This structure was chosen to deconstruct the dense, technical report into digestible, thematic sections, allowing for non-linear exploration. The user can switch between comparing platforms, exploring bet types, understanding the analytical process, and accessing safety tools at will. This prioritizes user-driven learning over a rigid, linear document format. The key interactions are tab navigation, a comparative radar chart, and a filterable grid of bet types, designed to make complex information accessible and engaging. -->
+    <!-- Visualization & Content Choices: 
+        1. Platform Comparison: Goal: Compare. Method: Side-by-side card layout for qualitative features and a Chart.js Radar Chart for quantitative comparison (Odds, Features, etc.). Interaction: Chart tooltips. Justification: Visualizes relative strengths effectively.
+        2. Bet Type Explorer: Goal: Organize/Inform. Method: Filterable grid of cards using HTML/CSS/JS. Interaction: Category filter buttons dynamically display relevant bet types. Justification: Turns a static taxonomy into an interactive learning tool.
+        3. Analytical Playbook: Goal: Explain a process. Method: HTML/CSS flowchart diagram and interactive info cards for key metrics. Interaction: Hover effects on cards reveal definitions. Justification: Simplifies a complex workflow into a clear, visual sequence.
+        4. Safer Gambling Hub: Goal: Inform/Support. Method: Clean, categorized lists with prominent contact info. Interaction: Standard links. Justification: Prioritizes clarity and immediate access to help.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .tab-button.active {
+            border-color: #075985;
+            color: #075985;
+            background-color: #f0f9ff;
+        }
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1.5rem;
+        }
+        .flow-container > .flow-step:last-child::after {
+            content: '';
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">AI-Driven Basketball Betting Analysis</h1>
+            <p class="mt-2 text-lg text-slate-600">An Interactive Guide to UK Markets on Skybet & bet365</p>
+        </header>
+
+        <nav class="mb-8 border-b border-slate-200">
+            <div class="flex flex-wrap -mb-px justify-center text-sm font-medium text-center" id="tab-navigation" role="tablist">
+                <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-slate-600 hover:border-slate-300 active" id="platform-tab" type="button" role="tab" data-target="#platform-content">Platform Duel</button>
+                <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-slate-600 hover:border-slate-300" id="taxonomy-tab" type="button" role="tab" data-target="#taxonomy-content">Bet Type Explorer</button>
+                <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-slate-600 hover:border-slate-300" id="analysis-tab" type="button" role="tab" data-target="#analysis-content">Analyst's Playbook</button>
+                <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-slate-600 hover:border-slate-300" id="safety-tab" type="button" role="tab" data-target="#safety-content">Safer Gambling Hub</button>
+            </div>
+        </nav>
+
+        <main>
+            <div id="platform-content" class="tab-content" role="tabpanel">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-slate-900">Platform Duel: Skybet vs. bet365</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">This section provides a head-to-head comparison of the two leading UK betting platforms. We'll examine their core features, user experience, and strategic differences to understand how each platform's "product" can influence betting strategy and value assessment.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="text-xl font-bold mb-4 text-center text-sky-700">Skybet</h3>
+                        <ul class="space-y-3 text-slate-700">
+                            <li><strong class="font-semibold">BuildABet:</strong> Combine markets within a single game for a custom accumulator.</li>
+                            <li><strong class="font-semibold">AccaFreeze:</strong> Unique tool to "freeze" a winning leg on a 5+ selection accumulator, securing part of the bet.</li>
+                            <li><strong class="font-semibold">RequestABet™:</strong> Request odds for unique betting scenarios not already listed.</li>
+                            <li><strong class="font-semibold">Price Boosts:</strong> Regularly offers enhanced odds on specific markets.</li>
+                            <li class="pt-2 mt-2 border-t border-slate-200"><strong class="font-semibold">Overall Take:</strong> Strong on user experience and innovative accumulator features, often appealing to recreational bettors. Odds can be less competitive than bet365.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="text-xl font-bold mb-4 text-center text-emerald-700">bet365</h3>
+                        <ul class="space-y-3 text-slate-700">
+                            <li><strong class="font-semibold">Bet Builder+:</strong> Combine markets from single or multiple events into one wager.</li>
+                            <li><strong class="font-semibold">Early Payout Offer:</strong> Moneyline bets paid as winners if your team gets a large lead (e.g., 18 points).</li>
+                            <li><strong class="font-semibold">Edit Bet:</strong> Add, swap, or remove selections on unsettled bets, even in-play.</li>
+                            <li><strong class="font-semibold">Super Boosts:</strong> Frequent and significant price enhancements across many sports.</li>
+                            <li class="pt-2 mt-2 border-t border-slate-200"><strong class="font-semibold">Overall Take:</strong> The industry "gold standard" with superior odds, market depth, and powerful in-play tools. Rich data integration creates a self-contained analytical environment.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold mb-4 text-center">Visual Feature Comparison</h3>
+                    <div class="chart-container">
+                        <canvas id="platformRadarChart"></canvas>
+                    </div>
+                    <p class="text-center mt-4 text-sm text-slate-500">A visual summary of each platform's strengths across key categories. Hover over points for details.</p>
+                </div>
+            </div>
+
+            <div id="taxonomy-content" class="tab-content hidden" role="tabpanel">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-slate-900">Bet Type Explorer</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">This interactive explorer breaks down the vast world of basketball betting markets. Use the filters to navigate through different categories, from foundational game outcomes to granular player-specific propositions. Each card explains the bet and the key data needed to analyze it.</p>
+                </div>
+                
+                <div class="flex justify-center flex-wrap gap-2 mb-8" id="bet-type-filters">
+                    <button class="bet-filter-button bg-sky-800 text-white px-4 py-2 rounded-full text-sm font-medium" data-filter="all">All Markets</button>
+                    <button class="bet-filter-button bg-white text-slate-700 px-4 py-2 rounded-full text-sm font-medium border border-slate-300" data-filter="foundational">Foundational</button>
+                    <button class="bet-filter-button bg-white text-slate-700 px-4 py-2 rounded-full text-sm font-medium border border-slate-300" data-filter="props">Proposition (Props)</button>
+                    <button class="bet-filter-button bg-white text-slate-700 px-4 py-2 rounded-full text-sm font-medium border border-slate-300" data-filter="futures">Futures</button>
+                </div>
+
+                <div id="bet-type-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Cards will be populated by JS -->
+                </div>
+            </div>
+
+            <div id="analysis-content" class="tab-content hidden" role="tabpanel">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl font-bold text-slate-900">The Analyst's Playbook</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">This section visualizes the systematic process for quantitative basketball analysis. It outlines the journey from gathering raw data to identifying potentially valuable bets (+EV). Below the flowchart, you'll find an interactive glossary of the advanced metrics that power this analytical engine.</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-center mb-6">A Framework for Predictive Modeling</h3>
+                <div class="flow-container flex flex-col md:flex-row justify-center items-center flex-wrap gap-10 md:gap-16 mb-12">
+                    <div class="flow-step relative text-center bg-white p-4 rounded-lg shadow-sm border border-slate-200 w-48">
+                        <div class="text-sky-600 font-bold mb-1">Step 1</div>
+                        <p class="font-semibold">Data Acquisition</p>
+                    </div>
+                    <div class="flow-step relative text-center bg-white p-4 rounded-lg shadow-sm border border-slate-200 w-48">
+                        <div class="text-sky-600 font-bold mb-1">Step 2</div>
+                        <p class="font-semibold">Situational Analysis</p>
+                    </div>
+                    <div class="flow-step relative text-center bg-white p-4 rounded-lg shadow-sm border border-slate-200 w-48">
+                        <div class="text-sky-600 font-bold mb-1">Step 3</div>
+                        <p class="font-semibold">Predictive Modeling</p>
+                    </div>
+                    <div class="flow-step relative text-center bg-white p-4 rounded-lg shadow-sm border border-slate-200 w-48">
+                        <div class="text-sky-600 font-bold mb-1">Step 4</div>
+                        <p class="font-semibold">Identify +EV Bets</p>
+                    </div>
+                </div>
+
+                 <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                    <h3 class="text-xl font-bold mb-6 text-center">Key Advanced Metrics Glossary</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-md">
+                            <h4 class="font-bold">Pace</h4>
+                            <p class="text-sm text-slate-600">Possessions per 48 minutes. Crucial for Over/Under totals.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-md">
+                            <h4 class="font-bold">Net Rating</h4>
+                            <p class="text-sm text-slate-600">Points scored minus points allowed per 100 possessions. A top-tier indicator of team strength.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-md">
+                            <h4 class="font-bold">eFG% (Effective FG%)</h4>
+                            <p class="text-sm text-slate-600">Adjusts for the extra value of 3-pointers. A better measure of shooting efficiency.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-md">
+                            <h4 class="font-bold">TS% (True Shooting%)</h4>
+                            <p class="text-sm text-slate-600">A comprehensive measure of scoring efficiency including FTs, 2-pointers, and 3-pointers.</p>
+                        </div>
+                         <div class="p-4 bg-slate-50 rounded-md">
+                            <h4 class="font-bold">Usage Rate</h4>
+                            <p class="text-sm text-slate-600">Percentage of team plays "used" by a player while on the floor. Key for player props.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-md">
+                            <h4 class="font-bold">RAPTOR</h4>
+                            <p class="text-sm text-slate-600">An advanced metric estimating a player's total on/off court impact per 100 possessions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="safety-content" class="tab-content hidden" role="tabpanel">
+                 <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-slate-900">Safer Gambling Hub</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">This hub provides critical information and resources to promote responsible gambling. It details the tools available on both Skybet and bet365 to help you stay in control, and provides contact information for professional, confidential support organizations.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="text-xl font-bold mb-4 text-emerald-700">Tools to Manage Your Play</h3>
+                        <p class="mb-4 text-sm text-slate-600">Proactive tools to help you set limits and track your activity.</p>
+                        <ul class="space-y-3">
+                            <li><strong class="font-semibold text-slate-800">Deposit Limits:</strong> Control how much you can deposit daily, weekly, or monthly. (Both platforms)</li>
+                            <li><strong class="font-semibold text-slate-800">Reality Checks:</strong> Timed pop-ups to remind you how long you've been playing. (Both platforms)</li>
+                            <li><strong class="font-semibold text-slate-800">Profit & Loss / My Activity:</strong> Tools to review your betting history, wins, losses, and net position. (Both platforms)</li>
+                        </ul>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+                        <h3 class="text-xl font-bold mb-4 text-amber-700">Tools to Take a Break</h3>
+                        <p class="mb-4 text-sm text-slate-600">Reactive tools for when you feel you need to enforce a break from gambling.</p>
+                        <ul class="space-y-3">
+                            <li><strong class="font-semibold text-slate-800">Cool-Off / Time-Out:</strong> Take a short-term break, blocking access for 24 hours up to 30 days. (Both platforms)</li>
+                            <li><strong class="font-semibold text-slate-800">Self-Exclusion:</strong> Block access to your account for a longer period (6 months to 5+ years). A crucial step for stopping. (Both platforms)</li>
+                            <li><strong class="font-semibold text-slate-800">GAMSTOP:</strong> A free national service to self-exclude from ALL UK-licensed online gambling companies at once.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-6 rounded-lg mt-8">
+                    <h3 class="font-bold text-lg mb-2">Need to Talk? Confidential Support is Available.</h3>
+                    <p>If you're concerned about your gambling, or that of someone you know, please reach out. These organizations offer free, confidential advice and support.</p>
+                    <div class="mt-4 space-y-2">
+                        <p><strong class="font-semibold">GamCare National Gambling Helpline:</strong> <a href="tel:08088020133" class="underline">0808 8020 133</a> (24/7)</p>
+                        <p><strong class="font-semibold">BeGambleAware:</strong> Visit <a href="https://www.begambleaware.org" target="_blank" rel="noopener noreferrer" class="underline">begambleaware.org</a> for information and support.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const platformRadarData = {
+        labels: ['Odds Quality', 'Market Depth', 'In-Play Features', 'Data Integration', 'Promotions'],
+        datasets: [{
+            label: 'Skybet',
+            data: [3, 4, 3, 2, 4],
+            backgroundColor: 'rgba(2, 132, 199, 0.2)',
+            borderColor: 'rgb(2, 132, 199)',
+            pointBackgroundColor: 'rgb(2, 132, 199)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(2, 132, 199)'
+        }, {
+            label: 'bet365',
+            data: [5, 5, 5, 5, 4],
+            backgroundColor: 'rgba(5, 150, 105, 0.2)',
+            borderColor: 'rgb(5, 150, 105)',
+            pointBackgroundColor: 'rgb(5, 150, 105)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(5, 150, 105)'
+        }]
+    };
+
+    const radarConfig = {
+        type: 'radar',
+        data: platformRadarData,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                r: {
+                    angleLines: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 12
+                        },
+                        color: '#334155'
+                    },
+                    ticks: {
+                        backdropColor: 'transparent',
+                        stepSize: 1,
+                        min: 0,
+                        max: 5
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.r !== null) {
+                                label += context.parsed.r + ' / 5';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        },
+    };
+
+    const platformRadarCtx = document.getElementById('platformRadarChart');
+    if (platformRadarCtx) {
+        new Chart(platformRadarCtx, radarConfig);
+    }
+
+    const betTypesData = [
+        { name: 'Moneyline', category: 'foundational', desc: 'Bet on the outright winner.', factors: 'Team strength, injuries, H2H.' },
+        { name: 'Point Spread', category: 'foundational', desc: 'Bet on the margin of victory against a handicap.', factors: 'Performance vs. spread (ATS), net rating.' },
+        { name: 'Totals (Over/Under)', category: 'foundational', desc: 'Bet on the combined total points scored.', factors: 'Team Pace, Offensive/Defensive ratings.' },
+        { name: 'Player Points O/U', category: 'props', desc: 'Bet on a player\'s total points.', factors: 'Usage Rate, TS%, defensive matchup.' },
+        { name: 'Player Rebounds O/U', category: 'props', desc: 'Bet on a player\'s total rebounds.', factors: 'Rebounding Rate, opponent FG%.' },
+        { name: 'Player Assists O/U', category: 'props', desc: 'Bet on a player\'s total assists.', factors: 'Assist Rate, team shooting quality.' },
+        { name: 'First Basket Scorer', category: 'props', desc: 'Bet on who scores the first basket.', factors: 'Opening play tendencies, starting lineup.' },
+        { name: 'Quarter/Half Betting', category: 'props', desc: 'Moneyline, Spread, or Totals for a specific game segment.', factors: 'Team performance in specific periods.' },
+        { name: 'Championship Winner', category: 'futures', desc: 'Bet on the team to win the league title.', factors: 'Long-term power ratings, roster strength.' },
+        { name: 'Player MVP Award', category: 'futures', desc: 'Bet on the player to win Most Valuable Player.', factors: 'Advanced impact metrics (VORP, RAPTOR), team success.' },
+    ];
+
+    const betTypeGrid = document.getElementById('bet-type-grid');
+    function renderBetTypes(filter = 'all') {
+        if (!betTypeGrid) return;
+        betTypeGrid.innerHTML = '';
+        const filteredData = filter === 'all' ? betTypesData : betTypesData.filter(bt => bt.category === filter);
+        filteredData.forEach(bet => {
+            const card = document.createElement('div');
+            card.className = `bet-card bg-white p-4 rounded-lg shadow-sm border border-slate-200`;
+            card.dataset.category = bet.category;
+            card.innerHTML = `
+                <h4 class="font-bold text-slate-900">${bet.name}</h4>
+                <p class="text-sm text-slate-600 mt-1">${bet.desc}</p>
+                <p class="text-xs text-slate-500 mt-3 pt-3 border-t border-slate-100"><strong class="font-semibold">Key Factors:</strong> ${bet.factors}</p>
+            `;
+            betTypeGrid.appendChild(card);
+        });
+    }
+    renderBetTypes();
+
+    const filterButtons = document.querySelectorAll('.bet-filter-button');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            filterButtons.forEach(btn => {
+                btn.classList.remove('bg-sky-800', 'text-white');
+                btn.classList.add('bg-white', 'text-slate-700');
+            });
+            button.classList.add('bg-sky-800', 'text-white');
+            button.classList.remove('bg-white', 'text-slate-700');
+            renderBetTypes(button.dataset.filter);
+        });
+    });
+
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            const target = button.dataset.target;
+            tabContents.forEach(content => {
+                if ('#' + content.id === target) {
+                    content.classList.remove('hidden');
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+        });
+    });
+});
+</script>
+
+</body>
+</html>
