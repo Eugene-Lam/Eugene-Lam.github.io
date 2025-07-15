@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Algorithmic Edge: Interactive Hockey Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony (Slates and Cyan) -->
+    <!-- Application Structure Plan: A four-tab SPA (Playbook, AI Co-Pilot, Hybrid Model, Responsible Gaming) to guide users from learning core concepts to applying them in a simulated workflow. This task-oriented structure (Learn -> Analyze -> Apply) is more usable than a linear report, using interactive elements like a metric explorer and prompt workbench to make the information tangible and engaging. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Method -> Interaction -> Justification. Core Stats -> Compare -> Interactive Bar Chart (Chart.js) -> Click to update -> Allows direct comparison of team metrics. LLM Prompts -> Organize/Apply -> Dropdown + Code Block (HTML/JS) -> Select task to view prompt -> Provides a practical, reusable tool. 6-Step Workflow -> Organize -> CSS Flowchart -> Hover to highlight -> Clearly visualizes the process. Case Study -> Synthesize -> JS Stepper -> Click through steps -> Breaks down a complex analysis into a digestible narrative. NO SVG/Mermaid used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .tab-active { 
+            border-color: #0891b2; /* cyan-700 */
+            color: #0e7490; /* cyan-800 */
+            background-color: #f0f9ff; /* sky-50 */
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #475569; /* slate-600 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 380px; }
+        }
+        .step { transition: all 0.3s ease-in-out; }
+        .step-active { opacity: 1; transform: scale(1); }
+        .step-inactive { opacity: 0; height: 0; overflow: hidden; transform: scale(0.95); }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">The Algorithmic Edge</h1>
+            <p class="text-slate-600 mt-2">An Interactive Guide to Ice Hockey Betting Analysis with LLMs</p>
+        </header>
+
+        <nav class="mb-8 bg-white p-2 rounded-lg shadow-md">
+            <ul class="flex flex-wrap justify-center gap-2 md:gap-4">
+                <li><button data-tab="playbook" class="nav-tab text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-b-2 transition-colors duration-200">The Quant's Playbook</button></li>
+                <li><button data-tab="ai" class="nav-tab text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-b-2 transition-colors duration-200">The AI Co-Pilot</button></li>
+                <li><button data-tab="model" class="nav-tab text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-b-2 transition-colors duration-200">The Hybrid Model</button></li>
+                <li><button data-tab="responsible" class="nav-tab text-sm md:text-base font-semibold py-2 px-3 md:px-4 rounded-md border-b-2 transition-colors duration-200">Responsible Gaming</button></li>
+            </ul>
+        </nav>
+
+        <main>
+            <!-- SECTION 1: The Quant's Playbook -->
+            <section id="playbook" class="tab-content space-y-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900">Foundations of Quantitative Betting</h2>
+                    <p class="text-slate-700">Success in betting isn't just about picking winners; it's about systematically finding value. This section covers the core analytical concepts needed to deconstruct hockey games and betting markets. Explore the key metrics that reveal a team's true strength beyond their win-loss record.</p>
+                </div>
+                
+                <!-- Market Basics -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4 text-cyan-800">Market Basics</h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="border border-slate-200 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg">Moneyline</h4>
+                            <p class="text-slate-600 text-sm">The simplest bet: who will win the game outright? Favorites have negative odds (e.g., -150), while underdogs have positive odds (e.g., +130).</p>
+                        </div>
+                        <div class="border border-slate-200 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg">Puck Line</h4>
+                            <p class="text-slate-600 text-sm">Hockey's version of a point spread, almost always set at +/- 1.5 goals. The favorite must win by 2+ goals to cover.</p>
+                        </div>
+                        <div class="border border-slate-200 p-4 rounded-lg">
+                            <h4 class="font-bold text-lg">Totals (Over/Under)</h4>
+                            <p class="text-slate-600 text-sm">A bet on the total combined goals scored by both teams being over or under a number set by the sportsbook (e.g., 6.5).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics Explorer -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4 text-cyan-800">Key Metrics Explorer</h3>
+                    <p class="text-slate-700 mb-6">Click on a metric to see its definition, why it's important for betting analysis, and a visual representation of strong vs. weak performance.</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <button class="metric-btn bg-cyan-600 text-white py-1 px-3 rounded-full text-sm font-medium hover:bg-cyan-700 transition">CF%</button>
+                        <button class="metric-btn bg-slate-200 text-slate-700 py-1 px-3 rounded-full text-sm font-medium hover:bg-slate-300 transition">xGF%</button>
+                        <button class="metric-btn bg-slate-200 text-slate-700 py-1 px-3 rounded-full text-sm font-medium hover:bg-slate-300 transition">PDO</button>
+                        <button class="metric-btn bg-slate-200 text-slate-700 py-1 px-3 rounded-full text-sm font-medium hover:bg-slate-300 transition">GSAx</button>
+                        <button class="metric-btn bg-slate-200 text-slate-700 py-1 px-3 rounded-full text-sm font-medium hover:bg-slate-300 transition">Special Teams</button>
+                    </div>
+
+                    <div id="metric-display" class="grid md:grid-cols-2 gap-6 items-center">
+                        <div id="metric-info">
+                            <h4 id="metric-title" class="text-lg font-bold"></h4>
+                            <p id="metric-definition" class="text-sm text-slate-600 my-2"></p>
+                            <p id="metric-application" class="text-sm text-slate-800 bg-sky-50 p-3 rounded-md"></p>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="metricChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- SECTION 2: The AI Co-Pilot -->
+            <section id="ai" class="tab-content hidden space-y-8">
+                 <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900">The AI Co-Pilot</h2>
+                    <p class="text-slate-700">Large Language Models (LLMs) are powerful research assistants, not fortune tellers. Their value lies in processing and structuring information, not in making predictions. This section explains how to use them effectively and safely, avoiding common pitfalls like factual errors and bias.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-4 text-green-700">What to DO with an LLM ✅</h3>
+                        <ul class="space-y-3 list-inside list-disc text-slate-600">
+                            <li><strong>Summarize Text:</strong> Condense multiple news articles into key bullet points.</li>
+                            <li><strong>Structure Data:</strong> Convert raw, copied-and-pasted stats into clean tables or JSON.</li>
+                            <li><strong>Extract Information:</strong> Pull specific details (injuries, quotes) from long documents.</li>
+                            <li><strong>Brainstorm Ideas:</strong> Generate checklists or potential angles to research further.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow">
+                        <h3 class="text-xl font-semibold mb-4 text-red-700">What NOT to do ❌</h3>
+                        <ul class="space-y-3 list-inside list-disc text-slate-600">
+                            <li><strong>Ask for Predictions:</strong> Never ask "Who will win?". The LLM has no reasoning ability.</li>
+                            <li><strong>Trust Statistics Blindly:</strong> ALWAYS verify any number or fact against a reliable primary source. LLMs can "hallucinate" data.</li>
+                            <li><strong>Request Betting Advice:</strong> Do not ask for picks. This is irresponsible and misuses the tool.</li>
+                            <li><strong>Assume Current Knowledge:</strong> Provide all necessary up-to-date information in your prompt.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4 text-cyan-800">Prompting Workbench</h3>
+                    <p class="text-slate-700 mb-4">Effective prompting is a skill. Select a task below to see a best-practice prompt template. You can use these as a starting point for your own analysis.</p>
+                    <div class="mb-4">
+                        <label for="prompt-select" class="block text-sm font-medium text-slate-700 mb-1">Select an Analysis Task:</label>
+                        <select id="prompt-select" class="w-full p-2 border border-slate-300 rounded-md bg-white shadow-sm focus:ring-cyan-500 focus:border-cyan-500">
+                            <option value="structure_stats">Structure Team Statistics</option>
+                            <option value="extract_factors">Extract Situational Factors from News</option>
+                            <option value="synthesize_briefing">Synthesize a Pre-Game Briefing</option>
+                        </select>
+                    </div>
+                    <div class="bg-slate-900 text-white p-4 rounded-lg font-mono text-sm overflow-x-auto">
+                        <pre><code id="prompt-display"></code></pre>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- SECTION 3: The Hybrid Model -->
+            <section id="model" class="tab-content hidden space-y-8">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900">The Hybrid Model in Action</h2>
+                    <p class="text-slate-700">The most effective strategy combines human expertise with AI efficiency. The human analyst drives the process—gathering data, performing the actual analysis, and making the final decision. The LLM acts as a co-pilot, handling the tedious work of data processing. This section demonstrates this workflow with a step-by-step interactive case study.</p>
+                </div>
+                
+                <!-- The 6-Step Blueprint -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4 text-cyan-800">The 6-Step Blueprint</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-4 p-3 rounded-md hover:bg-sky-50 transition">
+                            <div class="flex-shrink-0 bg-cyan-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">1</div>
+                            <div><strong class="text-slate-800">Human - Data Gathering:</strong> Collect stats and news from trusted primary sources.</div>
+                        </div>
+                        <div class="flex items-start gap-4 p-3 rounded-md hover:bg-sky-50 transition">
+                            <div class="flex-shrink-0 bg-cyan-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">2</div>
+                            <div><strong class="text-slate-800">LLM - Data Processing:</strong> Feed raw data into the LLM with structured prompts to clean and organize it.</div>
+                        </div>
+                        <div class="flex items-start gap-4 p-3 rounded-md hover:bg-sky-50 transition">
+                            <div class="flex-shrink-0 bg-cyan-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">3</div>
+                            <div><strong class="text-slate-800">Human - Verification:</strong> Cross-reference the LLM's output against the original sources. Never skip this step.</div>
+                        </div>
+                        <div class="flex items-start gap-4 p-3 rounded-md hover:bg-sky-50 transition">
+                            <div class="flex-shrink-0 bg-cyan-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">4</div>
+                            <div><strong class="text-slate-800">Human - Core Analysis:</strong> Analyze the verified, structured data to identify key mismatches and value.</div>
+                        </div>
+                        <div class="flex items-start gap-4 p-3 rounded-md hover:bg-sky-50 transition">
+                            <div class="flex-shrink-0 bg-cyan-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">5</div>
+                            <div><strong class="text-slate-800">Human - Value Identification:</strong> Compare your analysis against market odds to find discrepancies.</div>
+                        </div>
+                         <div class="flex items-start gap-4 p-3 rounded-md hover:bg-sky-50 transition">
+                            <div class="flex-shrink-0 bg-cyan-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-bold">6</div>
+                            <div><strong class="text-slate-800">Human - Decision & Logging:</strong> Make the final betting decision and meticulously record it.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Case Study -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4 text-cyan-800">Interactive Case Study: Bruins vs. Maple Leafs</h3>
+                    <div id="case-study-content" class="relative">
+                        <!-- Steps will be injected here by JS -->
+                    </div>
+                    <div class="mt-6 flex justify-between items-center">
+                        <button id="prev-step" class="bg-slate-300 text-slate-700 py-2 px-4 rounded-md font-semibold hover:bg-slate-400 transition disabled:opacity-50" disabled>Previous</button>
+                        <span id="step-indicator" class="text-sm font-medium text-slate-500">Step 1 of 6</span>
+                        <button id="next-step" class="bg-cyan-600 text-white py-2 px-4 rounded-md font-semibold hover:bg-cyan-700 transition">Next</button>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- SECTION 4: Responsible Gaming -->
+            <section id="responsible" class="tab-content hidden space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-2xl font-bold mb-4 text-slate-900">The Responsible Edge</h2>
+                    <p class="text-slate-700">A data-driven approach encourages discipline, but the principles of responsible gaming are paramount. This framework should be used to reinforce safe habits, not undermine them.</p>
+                </div>
+
+                 <div class="bg-white p-6 rounded-lg shadow">
+                    <h3 class="text-xl font-semibold mb-4 text-cyan-800">Core Principles</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start gap-3">
+                            <span class="text-cyan-600 font-bold text-xl mt-1">✓</span>
+                            <div><strong class="text-slate-800">Bet for Entertainment, Not Income.</strong> Treat betting as a recreational expense. Any money you stake should be money you are fully prepared to lose.</div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-cyan-600 font-bold text-xl mt-1">✓</span>
+                            <div><strong class="text-slate-800">Set Strict Limits.</strong> Before you start, decide on firm limits for both time and money. Stick to them, win or lose.</div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-cyan-600 font-bold text-xl mt-1">✓</span>
+                            <div><strong class="text-slate-800">Never Chase Losses.</strong> Increasing your bet size to win back money is a dangerous pattern. Accept the loss and stick to your plan.</div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="text-cyan-600 font-bold text-xl mt-1">✓</span>
+                            <div><strong class="text-slate-800">Use Disposable Funds Only.</strong> Never bet with money needed for essential living expenses like rent, bills, or food.</div>
+                        </li>
+                    </ul>
+                </div>
+                 <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-800 p-4 rounded-r-lg" role="alert">
+                    <p class="font-bold">Need Help?</p>
+                    <p>If you or someone you know might have a gambling problem, confidential help is available. Call the National Problem Gambling Helpline at <strong>1-800-GAMBLER</strong>.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const tabs = document.querySelectorAll('.nav-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    const setActiveTab = (tabId) => {
+        tabs.forEach(tab => {
+            if (tab.dataset.tab === tabId) {
+                tab.classList.add('tab-active');
+                tab.classList.remove('tab-inactive');
+            } else {
+                tab.classList.add('tab-inactive');
+                tab.classList.remove('tab-active');
+            }
+        });
+        tabContents.forEach(content => {
+            if (content.id === tabId) {
+                content.classList.remove('hidden');
+            } else {
+                content.classList.add('hidden');
+            }
+        });
+    };
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            setActiveTab(tab.dataset.tab);
+        });
+    });
+
+    setActiveTab('playbook');
+
+    const metricsData = {
+        'CF%': {
+            title: 'Corsi For Percentage (CF%)',
+            definition: 'Measures all shot attempts (on goal, missed, blocked) to serve as a proxy for puck possession. A CF% above 50% indicates a team controls the game\'s flow.',
+            application: 'Identifies teams that dictate play. A team with a poor record but high CF% might be undervalued and due for positive regression.',
+            chartData: {
+                labels: ['Dominant Team', 'Average Team', 'Weak Team'],
+                values: [55, 50, 45],
+                backgroundColor: ['#06b6d4', '#a5f3fc', '#fca5a5'],
+                title: 'Example Corsi For % (CF%)'
+            }
+        },
+        'xGF%': {
+            title: 'Expected Goals For Percentage (xGF%)',
+            definition: 'Assigns a probability to each shot becoming a goal based on location, type, etc. Measures shot quality, not just quantity.',
+            application: 'Flags teams outperforming or underperforming their chance quality. A team with a high win rate but low xGF% is likely getting lucky and is a good "fade" candidate.',
+            chartData: {
+                labels: ['Elite Team', 'Average Team', 'Poor Team'],
+                values: [56, 50, 44],
+                backgroundColor: ['#06b6d4', '#a5f3fc', '#fca5a5'],
+                title: 'Example Expected Goals For % (xGF%)'
+            }
+        },
+        'PDO': {
+            title: 'PDO (The "Luck" Metric)',
+            definition: 'Calculated by adding a team\'s 5-on-5 shooting percentage and its 5-on-5 save percentage. Regresses to 100 over time.',
+            application: 'A PDO significantly above 100 (e.g., 103) suggests a team is "lucky" and due for a losing streak (negative regression). Below 100 suggests the opposite.',
+             chartData: {
+                labels: ['"Lucky" Team', 'Average', '"Unlucky" Team'],
+                values: [102.5, 100, 97.5],
+                backgroundColor: ['#fca5a5', '#a5f3fc', '#06b6d4'],
+                title: 'Example PDO Values'
+            }
+        },
+        'GSAx': {
+            title: 'Goals Saved Above Expected (GSAx)',
+            definition: 'Compares goals allowed to the expected goals (xG) a goalie faced. It isolates goalie performance from the quality of the defense in front of them.',
+            application: 'The gold standard for goalie evaluation. Identifies truly elite (high positive GSAx) or struggling (high negative GSAx) goalies, creating betting opportunities.',
+            chartData: {
+                labels: ['Elite Goalie', 'Average Goalie', 'Struggling Goalie'],
+                values: [15.5, 0, -10.2],
+                backgroundColor: ['#06b6d4', '#a5f3fc', '#fca5a5'],
+                title: 'Example Goalie GSAx (Season Total)'
+            }
+        },
+        'Special Teams': {
+            title: 'Special Teams (PP% & PK%)',
+            definition: 'Power Play % (PP%) measures scoring efficiency with a man advantage. Penalty Kill % (PK%) measures defensive efficiency when shorthanded.',
+            application: 'Critical in close games. A matchup between an elite power play and a poor penalty kill is a significant mismatch that can decide the game.',
+            chartData: {
+                labels: ['Elite PP', 'Average PP', 'Struggling PK', 'Elite PK'],
+                values: [26, 20, 78, 85],
+                backgroundColor: ['#06b6d4', '#a5f3fc','#fca5a5', '#06b6d4'],
+                title: 'Example Special Teams Percentages'
+            }
+        }
+    };
+
+    const metricTitle = document.getElementById('metric-title');
+    const metricDefinition = document.getElementById('metric-definition');
+    const metricApplication = document.getElementById('metric-application');
+    const metricBtns = document.querySelectorAll('.metric-btn');
+    let metricChart;
+
+    function updateMetricDisplay(metricKey) {
+        const data = metricsData[metricKey];
+        metricTitle.textContent = data.title;
+        metricDefinition.textContent = data.definition;
+        metricApplication.textContent = data.application;
+        
+        metricBtns.forEach(btn => {
+            if (btn.textContent === metricKey) {
+                btn.classList.add('bg-cyan-600', 'text-white');
+                btn.classList.remove('bg-slate-200', 'text-slate-700');
+            } else {
+                btn.classList.remove('bg-cyan-600', 'text-white');
+                btn.classList.add('bg-slate-200', 'text-slate-700');
+            }
+        });
+
+        if (metricChart) {
+            metricChart.destroy();
+        }
+        
+        const ctx = document.getElementById('metricChart').getContext('2d');
+        metricChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.chartData.labels,
+                datasets: [{
+                    label: data.chartData.title,
+                    data: data.chartData.values,
+                    backgroundColor: data.chartData.backgroundColor,
+                    borderColor: data.chartData.backgroundColor.map(c => c.replace('a5a5', '900')),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: data.chartData.title }
+                },
+                scales: { y: { beginAtZero: false } }
+            }
+        });
+    }
+
+    metricBtns.forEach(btn => {
+        btn.addEventListener('click', () => updateMetricDisplay(btn.textContent));
+    });
+
+    updateMetricDisplay('CF%');
+
+    const prompts = {
+        'structure_stats': `You are a data analyst. Your task is to take the following raw text data for the Boston Bruins and Toronto Maple Leafs and structure it into a single, clean Markdown table.
+
+The table should compare the two teams across the following 5-on-5 metrics ONLY: CF%, xGF%, PDO, and Special Teams metrics: PP%, PK%. For goaltenders, include the GSAx for each team's likely starting goalie.
+
+<data>
+[Paste raw, copied text from stats websites here for both teams]
+</data>`,
+        'extract_factors': `You are a sports journalist's research assistant. Your task is to read the following articles provided in the <articles> tags and extract specific information into a JSON object. The JSON object must have the following keys: "confirmed_goalies", "injuries", "coach_quotes".
+- For "confirmed_goalies", list the name of the starting goalie for each team. If not confirmed, state "Unconfirmed".
+- For "injuries", create a list of objects, where each object represents an injured player and has the keys "player_name", "team", and "status".
+- For "coach_quotes", extract any direct quotes from either head coach regarding strategy or key matchups.
+
+<articles>
+[Paste full text of news articles here]
+</articles>`,
+        'synthesize_briefing': `You are an expert hockey analyst providing a pre-game briefing. Using ONLY the structured data provided below in the <data> tags, write a concise analysis. Do not use any outside knowledge or make predictions.
+
+Your analysis must have three sections:
+1.  **Biggest Statistical Mismatch:** Identify and explain the single largest advantage for one team based on the provided stats.
+2.  **Most Significant Situational Factor:** Identify and explain the most important injury or goalie situation.
+3.  **Primary Team Narratives:** In one sentence for each team, summarize their likely path to victory based on the data.
+
+<data>
+[Paste structured data from previous steps here]
+</data>`
+    };
+
+    const promptSelect = document.getElementById('prompt-select');
+    const promptDisplay = document.getElementById('prompt-display');
+
+    function updatePromptDisplay() {
+        promptDisplay.textContent = prompts[promptSelect.value];
+    }
+
+    promptSelect.addEventListener('change', updatePromptDisplay);
+    updatePromptDisplay();
+
+
+    const caseStudyData = [
+        {
+            title: "Step 1: Human - Data Gathering",
+            content: `The analyst gathers the latest stats from trusted sources. This includes 5v5 metrics, special teams performance, and individual goalie stats.<br><br>
+                     <div class="text-sm bg-slate-50 p-4 rounded-lg">
+                        <strong>Bruins:</strong> CF% 53.5, xGF% 54.0, PDO 99.5, PP 21%, PK 84%, Goalie GSAx +12.5<br>
+                        <strong>Maple Leafs:</strong> CF% 51.0, xGF% 52.5, PDO 102.5, PP 27%, PK 79%, Goalie GSAx -3.2
+                     </div>`
+        },
+        {
+            title: "Step 2: LLM - Data Processing",
+            content: `The analyst provides the raw data and recent news articles (e.g., confirming goalies, noting a key Leafs defenseman is a game-time decision) to the LLM with a structured prompt.<br><br>
+                     <p class="text-slate-700">The LLM returns a clean, structured output, like this table:</p>
+                     <div class="overflow-x-auto mt-2">
+                        <table class="min-w-full text-sm bg-white border">
+                            <thead class="bg-slate-100"><tr><th class="p-2 border">Metric</th><th class="p-2 border">Bruins</th><th class="p-2 border">Maple Leafs</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 border font-semibold">CF%</td><td class="p-2 border">53.5%</td><td class="p-2 border">51.0%</td></tr>
+                                <tr><td class="p-2 border font-semibold">xGF%</td><td class="p-2 border">54.0%</td><td class="p-2 border">52.5%</td></tr>
+                                <tr><td class="p-2 border font-semibold">PDO</td><td class="p-2 border">99.5</td><td class="p-2 border">102.5</td></tr>
+                                <tr><td class="p-2 border font-semibold">GSAx</td><td class="p-2 border text-green-600 font-bold">+12.5</td><td class="p-2 border text-red-600 font-bold">-3.2</td></tr>
+                            </tbody>
+                        </table>
+                     </div>`
+        },
+        {
+            title: "Step 3: Human - Verification",
+            content: `This is a critical, non-negotiable step. The analyst cross-references every number and fact from the LLM's output with the original data sources.<br><br>
+                     <div class="bg-green-100 border-l-4 border-green-500 text-green-800 p-4 rounded-r-lg">
+                        <p><strong>Result:</strong> All data generated by the LLM is verified as correct. The analysis can proceed.</p>
+                     </div>`
+        },
+        {
+            title: "Step 4: Human - Core Analysis",
+            content: `With verified data, the analyst identifies the key narratives and mismatches.<br><br>
+                     <ul class="list-disc list-inside space-y-2 text-slate-700">
+                        <li>Bruins hold a clear edge in 5v5 possession (CF%) and shot quality (xGF%).</li>
+                        <li>The Leafs' high PDO suggests they are overperforming and may be due for <strong class="text-red-600">negative regression</strong>.</li>
+                        <li>The biggest mismatch is in goal: Boston has an <strong class="text-green-600">elite-performing goalie</strong>, while Toronto's is underperforming.</li>
+                     </ul>`
+        },
+        {
+            title: "Step 5: Human - Value Identification",
+            content: `The analyst compares their findings to the market odds. The market has the Leafs as -120 favorites (implying a 54.5% win probability).<br><br>
+                     <div class="chart-container" style="height: 250px;"><canvas id="valueChart"></canvas></div><br>
+                     <p class="text-center text-sm mt-[-20px]">The analyst's model, weighing goaltending heavily, projects the Bruins as ~55% favorites. This significant discrepancy identifies betting value on Boston.</p>`
+        },
+        {
+            title: "Step 6: Human - Decision & Logging",
+            content: `Based on the identified value, the analyst makes a decision.<br><br>
+                     <div class="bg-sky-100 border-t-4 border-cyan-500 rounded-b text-slate-900 px-4 py-3 shadow-md" role="alert">
+                        <div class="flex">
+                            <div class="py-1"><svg class="fill-current h-6 w-6 text-cyan-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zM9 11v4h2v-4h-2zm0-6h2v2h-2V5z"/></svg></div>
+                            <div>
+                                <p class="font-bold">Final Decision:</p>
+                                <p class="text-sm">Place a wager on the Boston Bruins Moneyline at +100 odds. Record the bet, stake, and reasoning in a tracking spreadsheet to measure long-term ROI.</p>
+                            </div>
+                        </div>
+                    </div>`
+        }
+    ];
+
+    let currentStep = 0;
+    const caseStudyContent = document.getElementById('case-study-content');
+    const prevBtn = document.getElementById('prev-step');
+    const nextBtn = document.getElementById('next-step');
+    const stepIndicator = document.getElementById('step-indicator');
+    let valueChart = null;
+    
+    function renderCaseStudyStep() {
+        caseStudyContent.innerHTML = '';
+        const stepData = caseStudyData[currentStep];
+
+        const stepDiv = document.createElement('div');
+        stepDiv.className = 'step step-active';
+        stepDiv.innerHTML = `<h4 class="text-lg font-bold mb-3">${stepData.title}</h4><div>${stepData.content}</div>`;
+        caseStudyContent.appendChild(stepDiv);
+        
+        if (currentStep === 4) {
+            if(valueChart) valueChart.destroy();
+            const ctx = document.getElementById('valueChart').getContext('2d');
+            valueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Market Implied Win %', 'Analyst\'s Model Win %'],
+                    datasets: [{
+                        label: 'Team Win Probability',
+                        data: [54.5, 45],
+                        backgroundColor: ['#f87171', '#fb923c'],
+                    }, {
+                        label: 'Opponent Win Probability',
+                        data: [45.5, 55],
+                        backgroundColor: ['#a5f3fc', '#06b6d4'],
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: {display: true, text: 'Maple Leafs (Red/Orange) vs. Bruins (Blue)'} },
+                    scales: { x: { stacked: true, max: 100 }, y: { stacked: true } }
+                }
+            });
+        }
+
+        prevBtn.disabled = currentStep === 0;
+        nextBtn.disabled = currentStep === caseStudyData.length - 1;
+        stepIndicator.textContent = `Step ${currentStep + 1} of ${caseStudyData.length}`;
+    }
+
+    prevBtn.addEventListener('click', () => {
+        if (currentStep > 0) {
+            currentStep--;
+            renderCaseStudyStep();
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentStep < caseStudyData.length - 1) {
+            currentStep++;
+            renderCaseStudyStep();
+        }
+    });
+
+    renderCaseStudyStep();
+});
+</script>
+</body>
+</html>
