@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>北海道夏日之旅互動行程</title>
+    <title>北海道夏日之旅互動行程 (完整版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm Harmony (Light Beige/Off-white background, Dark Grey text, Muted Blue/Green/Orange accents) -->
-    <!-- Application Structure Plan: A single-page dashboard with a sticky top navigation for quick jumps between thematic sections (Noboribetsu/Toya, Biei, Sapporo). Each section uses a tabbed interface (e.g., Highlights, Transport, Food) to organize detailed information and prevent overwhelming the user. This structure prioritizes task-based exploration (finding info for a specific day/topic) over the original report's linear narrative, making it more user-friendly for a traveler on the go. -->
+    <!-- Application Structure Plan: A single-page dashboard with a sticky top navigation bar for major destinations/themes (Overview, Sapporo, Otaru, Day Trips, Furano/Biei). This geographical/thematic grouping is more intuitive for a traveler than a purely chronological one. Each section uses a tabbed interface (e.g., Highlights, Transport, Food) to organize dense information effectively. This revision accommodates the user's feedback by converting the 2-day trip into two separate day trips and fully detailing ALL original itinerary days, making it a comprehensive guide. -->
     <!-- Visualization & Content Choices:
-    - Report Info: Transport options (JR vs Bus) table -> Goal: Compare Time & Cost -> Viz: Chart.js Bar Chart -> Interaction: Hover tooltips -> Justification: Visual comparison is faster than reading a table.
-    - Report Info: Multi-step travel routes (e.g., Noboribetsu to Toya) -> Goal: Organize sequential steps -> Viz: HTML/Tailwind flexbox-based process flow diagram -> Interaction: None needed, visual clarity is the key -> Justification: Clarifies the transfer process better than a numbered list.
-    - Report Info: Sightseeing spots & Food recommendations -> Goal: Inform & Present attractively -> Viz: HTML/Tailwind themed "cards" with Unicode icons (e.g., 🍜, 🌋) -> Interaction: Grouped within tabs for easy Browse -> Justification: Breaks up long text into digestible, visually appealing chunks.
+    - Report Info: Daily itinerary -> Goal: Provide a quick, comprehensive overview -> Viz: Enhanced HTML Table -> Interaction: Clickable rows for navigation -> Justification: The fastest way for users to see the entire plan and jump to a specific day's details.
+    - Report Info: Transport options (JR vs Bus) for Noboribetsu & Otaru -> Goal: Compare Time & Cost -> Viz: Chart.js Bar Chart -> Interaction: Hover tooltips -> Justification: Visual comparison is faster and clearer than text.
+    - Report Info: Multi-step travel routes (e.g., Sapporo to Shikotsu) -> Goal: Organize sequential steps -> Viz: HTML/Tailwind flexbox-based process flow diagram -> Interaction: None needed, visual clarity is key -> Justification: Simplifies complex transfers.
+    - Report Info: All sightseeing spots & Food recommendations -> Goal: Inform & Present attractively -> Viz: HTML/Tailwind themed "cards" with Unicode icons (e.g., 🍜, 🌋, 🌸) -> Interaction: Grouped within tabs for easy browsing -> Justification: Breaks down long text from the report into digestible, visually appealing chunks.
     - CONFIRMING NO SVG/Mermaid. All visuals are pure HTML/CSS/Canvas. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -72,7 +73,7 @@
             top: 0;
             z-index: 50;
             backdrop-filter: blur(10px);
-            background-color: rgba(253, 251, 245, 0.8);
+            background-color: rgba(253, 251, 245, 0.85);
         }
     </style>
 </head>
@@ -80,11 +81,11 @@
 
     <header class="sticky-nav shadow-sm">
         <nav class="container mx-auto px-4 py-3">
-            <ul class="flex justify-center space-x-4 md:space-x-8 text-sm md:text-base font-medium">
-                <li><a href="#overview" class="hover:text-blue-600 transition-colors">行程總覽</a></li>
-                <li><a href="#noboribetsu-toya" class="hover:text-blue-600 transition-colors">登別 & 洞爺湖</a></li>
-                <li><a href="#biei" class="hover:text-blue-600 transition-colors">美瑛一日遊</a></li>
-                <li><a href="#sapporo" class="hover:text-blue-600 transition-colors">札幌增補</a></li>
+            <ul class="flex justify-center items-center space-x-3 md:space-x-6 text-xs sm:text-sm md:text-base font-medium">
+                <li><a href="#overview" class="nav-link hover:text-blue-600 transition-colors">行程總覽</a></li>
+                <li><a href="#sapporo-otaru" class="nav-link hover:text-blue-600 transition-colors">札幌 & 小樽</a></li>
+                <li><a href="#day-trips" class="nav-link hover:text-blue-600 transition-colors">近郊一日遊</a></li>
+                <li><a href="#furano-biei" class="nav-link hover:text-blue-600 transition-colors">富良野 & 美瑛</a></li>
             </ul>
         </nav>
     </header>
@@ -93,13 +94,13 @@
 
         <section id="hero" class="text-center mb-12">
             <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-2">北海道夏日之旅</h1>
-            <p class="text-xl text-gray-600">互動式行程規劃儀表板</p>
+            <p class="text-xl text-gray-600">全方位互動行程儀表板</p>
         </section>
 
         <section id="overview" class="mb-16 scroll-mt-20">
-            <h2 class="text-3xl font-bold text-center mb-8">行程總覽</h2>
+            <h2 class="text-3xl font-bold text-center mb-8">行程總覽 (更新版)</h2>
             <div class="bg-white rounded-2xl shadow-lg p-4 md:p-6 overflow-x-auto">
-                <p class="mb-4 text-gray-600">這份整合後的行程表，結合了您原有的計畫與我們新增的三日深度探索。點擊下方表格中的日期，可以快速跳轉至相關的詳細規劃（若有）。</p>
+                <p class="mb-4 text-gray-600">這份整合後的行程表已根據您的最新需求調整完畢，並加入了所有日期的詳細規劃。點擊下方表格中的目的地，可以快速跳轉至相關的詳細規劃。</p>
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-blue-50">
@@ -110,305 +111,208 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="border-b border-gray-100">
-                            <td class="p-3">7月19日</td>
-                            <td class="p-3 font-medium">大通公園 + 札幌地下街</td>
-                            <td class="p-3 text-sm">(原有行程) 市區漫遊，地下街不受天氣影響</td>
-                            <td class="p-3 text-sm">多雲</td>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="document.querySelector('#sapporo-otaru .tab-btn[data-tab=\'sapporo-day1\']').click(); document.getElementById('sapporo-otaru').scrollIntoView({behavior: 'smooth'});">
+                            <td class="p-3">7月19日</td><td class="p-3 font-medium">札幌市區</td><td class="p-3 text-sm">大通公園啤酒節，地下街全天候探索</td><td class="p-3 text-sm">多雲</td>
                         </tr>
-                        <tr class="border-b border-gray-100 bg-blue-50 hover:bg-blue-100 cursor-pointer" onclick="document.getElementById('noboribetsu-toya').scrollIntoView({behavior: 'smooth'});">
-                            <td class="p-3"><strong>7月20日</strong></td>
-                            <td class="p-3 font-medium"><strong>登別</strong></td>
-                            <td class="p-3 text-sm"><strong>(新增) 前往登別，探索地獄谷、大湯沼，入住溫泉旅館</strong></td>
-                            <td class="p-3 text-sm">-</td>
+                        <tr class="border-b border-gray-100 bg-blue-50 hover:bg-blue-100 cursor-pointer" onclick="document.querySelector('#day-trips .tab-btn[data-tab=\'daytrip-noboribetsu\']').click(); document.getElementById('day-trips').scrollIntoView({behavior: 'smooth'});">
+                            <td class="p-3"><strong>7月20日</strong></td><td class="p-3 font-medium"><strong>登別 (當日來回)</strong></td><td class="p-3 text-sm"><strong>(新) 感受地獄谷震撼，享受天然足湯</strong></td><td class="p-3 text-sm">-</td>
                         </tr>
-                         <tr class="border-b border-gray-100 bg-blue-50 hover:bg-blue-100 cursor-pointer" onclick="document.getElementById('noboribetsu-toya').scrollIntoView({behavior: 'smooth'});">
-                            <td class="p-3"><strong>7月21日</strong></td>
-                            <td class="p-3 font-medium"><strong>洞爺湖</strong></td>
-                            <td class="p-3 text-sm"><strong>(新增) 從登別前往洞爺湖，遊覽有珠山或搭乘汽船，返回札幌</strong></td>
-                            <td class="p-3 text-sm">-</td>
+                         <tr class="border-b border-gray-100 bg-blue-50 hover:bg-blue-100 cursor-pointer" onclick="document.querySelector('#day-trips .tab-btn[data-tab=\'daytrip-shikotsu\']').click(); document.getElementById('day-trips').scrollIntoView({behavior: 'smooth'});">
+                            <td class="p-3"><strong>7月21日</strong></td><td class="p-3 font-medium"><strong>支笏湖 (當日來回)</strong></td><td class="p-3 text-sm"><strong>(新) 體驗「支笏湖藍」的清澈，輕鬆遊湖</strong></td><td class="p-3 text-sm">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
-                            <td class="p-3">7月22日</td>
-                            <td class="p-3 font-medium">圓山動物園 + 北海道神宮</td>
-                            <td class="p-3 text-sm">(原有行程) 戶外活動，晴天為主</td>
-                            <td class="p-3 text-sm">晴轉多雲</td>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="document.querySelector('#sapporo-otaru .tab-btn[data-tab=\'sapporo-day2\']').click(); document.getElementById('sapporo-otaru').scrollIntoView({behavior: 'smooth'});">
+                            <td class="p-3">7月22日</td><td class="p-3 font-medium">札幌市區</td><td class="p-3 text-sm">圓山動物園、北海道神宮，城市綠洲之旅</td><td class="p-3 text-sm">晴轉多雲</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
-                            <td class="p-3">7月23日</td>
-                            <td class="p-3 font-medium">白色戀人公園</td>
-                            <td class="p-3 text-sm">(原有行程) 室內參觀為主，彈性高</td>
-                            <td class="p-3 text-sm">多雲有雨</td>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="document.querySelector('#sapporo-otaru .tab-btn[data-tab=\'sapporo-day3\']').click(); document.getElementById('sapporo-otaru').scrollIntoView({behavior: 'smooth'});">
+                            <td class="p-3">7月23日</td><td class="p-3 font-medium">札幌市區</td><td class="p-3 text-sm">白色戀人公園，歐風童話體驗</td><td class="p-3 text-sm">多雲有雨</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
-                            <td class="p-3">7月24日</td>
-                            <td class="p-3 font-medium">小樽商店街 + 水族館</td>
-                            <td class="p-3 text-sm">(原有行程) 商店街有遮蔽，水族館為室內</td>
-                            <td class="p-3 text-sm">多雲或短暫雨</td>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="document.querySelector('#sapporo-otaru .tab-btn[data-tab=\'otaru-day\']').click(); document.getElementById('sapporo-otaru').scrollIntoView({behavior: 'smooth'});">
+                            <td class="p-3">7月24日</td><td class="p-3 font-medium">小樽</td><td class="p-3 text-sm">運河漫步，堺町通美食購物，水族館同樂</td><td class="p-3 text-sm">多雲或短暫雨</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
-                            <td class="p-3">7月25日</td>
-                            <td class="p-3 font-medium">富良野賞花</td>
-                            <td class="p-3 text-sm">(原有行程) 戶外花田，晴天最佳</td>
-                            <td class="p-3 text-sm">晴</td>
+                        <tr class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer" onclick="document.querySelector('#furano-biei .tab-btn[data-tab=\'furano-day\']').click(); document.getElementById('furano-biei').scrollIntoView({behavior: 'smooth'});">
+                            <td class="p-3">7月25日</td><td class="p-3 font-medium">富良野</td><td class="p-3 text-sm">富田農場賞花，品嚐在地和牛、咖哩</td><td class="p-3 text-sm">晴</td>
                         </tr>
-                        <tr class="bg-blue-50 hover:bg-blue-100 cursor-pointer" onclick="document.getElementById('biei').scrollIntoView({behavior: 'smooth'});">
-                            <td class="p-3"><strong>7月26日</strong></td>
-                            <td class="p-3 font-medium"><strong>美瑛</strong></td>
-                            <td class="p-3 text-sm"><strong>(新增) 遊覽拼布之路、全景之路及青池，返回札幌</strong></td>
-                            <td class="p-3 text-sm">晴轉多雲</td>
+                        <tr class="bg-blue-50 hover:bg-blue-100 cursor-pointer" onclick="document.querySelector('#furano-biei .tab-btn[data-tab=\'biei-day\']').click(); document.getElementById('furano-biei').scrollIntoView({behavior: 'smooth'});">
+                            <td class="p-3"><strong>7月26日</strong></td><td class="p-3 font-medium"><strong>美瑛</strong></td><td class="p-3 text-sm">拼布之路與全景之路，探訪夢幻青池</td><td class="p-3 text-sm">晴轉多雲</td>
                         </tr>
                         <tr>
-                            <td class="p-3">7月27日</td>
-                            <td class="p-3 font-medium">回程</td>
-                            <td class="p-3 text-sm">(原有行程) 準備返家</td>
-                            <td class="p-3 text-sm">-</td>
+                            <td class="p-3">7月27日</td><td class="p-3 font-medium">回程</td><td class="p-3 text-sm">準備返家</td><td class="p-3 text-sm">-</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <section id="noboribetsu-toya" class="mb-16 scroll-mt-20">
-            <h2 class="text-3xl font-bold text-center mb-2">登別 & 洞爺湖 (兩日一夜)</h2>
-            <p class="text-center text-gray-600 mb-8">深入北海道的火山核心，體驗地熱奇觀與壯麗湖景。</p>
+        <section id="sapporo-otaru" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8">札幌市區 & 小樽運河</h2>
             <div class="bg-white rounded-2xl shadow-lg p-4 md:p-6">
                 <div class="border-b border-gray-200 mb-6">
-                    <nav class="flex justify-center -mb-px space-x-6" data-tab-group="noboribetsu">
-                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600 active" data-tab="noboribetsu-day1">第一日：登別</button>
-                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="noboribetsu-day2">第二日：洞爺湖</button>
-                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="noboribetsu-transport">交通攻略</button>
+                    <nav class="flex flex-wrap justify-center -mb-px" data-tab-group="sapporo-otaru">
+                        <button class="tab-btn py-4 px-2 sm:px-4 text-gray-500 hover:text-blue-600 active" data-tab="sapporo-day1">7/19: 大通公園</button>
+                        <button class="tab-btn py-4 px-2 sm:px-4 text-gray-500 hover:text-blue-600" data-tab="sapporo-day2">7/22: 圓山公園</button>
+                        <button class="tab-btn py-4 px-2 sm:px-4 text-gray-500 hover:text-blue-600" data-tab="sapporo-day3">7/23: 白色戀人</button>
+                        <button class="tab-btn py-4 px-2 sm:px-4 text-gray-500 hover:text-blue-600" data-tab="otaru-day">7/24: 小樽一日遊</button>
                     </nav>
                 </div>
                 
-                <div id="noboribetsu-day1" class="tab-content active" data-tab-group="noboribetsu">
-                    <h3 class="font-bold text-xl mb-4 text-gray-800">第一日：登別 - 蒸氣與硫磺的交響詩</h3>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🌋 地獄谷 (Jigokudani)</h4>
-                            <p class="text-sm">近距離感受白煙繚繞的火山峽谷，空氣中瀰漫著濃厚的硫磺味，是視覺與嗅覺的雙重衝擊。免費入場。</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">♨️ 大湯沼天然足湯</h4>
-                            <p class="text-sm">健行後，將雙腳浸入溫暖的溫泉溪流中，洗去旅途疲憊。與大自然親密接觸的免費絕佳體驗。</p>
-                        </div>
-                         <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🍜 午餐：味の大王</h4>
-                            <p class="text-sm">品嚐登別名物「地獄拉麵」，可自選辣度，湯頭濃郁，充滿挑戰性，為地獄探索之旅揭開序幕。</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">👹 からくり閻魔堂</h4>
-                            <p class="text-sm">溫泉街上的趣味景點，機關閻王堂在特定時間會有變臉表演，值得駐足觀賞。</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🍮 晚餐與點心</h4>
-                            <p class="text-sm">可選擇旅館的會席料理，或在溫泉街品嚐蝦夷鹿肉漢堡、蜂蜜霜淇淋、道產子布丁等特色小吃。</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🏨 住宿：溫泉旅館</h4>
-                            <p class="text-sm">此行的精髓。盡情享受被譽為「溫泉百貨公司」的登別溫泉，舒緩身心。</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="noboribetsu-day2" class="tab-content" data-tab-group="noboribetsu">
-                    <h3 class="font-bold text-xl mb-4 text-gray-800">第二日：洞爺湖 - 火山口的壯麗詩篇</h3>
-                    <p class="mb-4 text-gray-600">抵達洞爺湖後，您可以依據興趣選擇一條路線深度探索：</p>
+                <div id="sapporo-day1" class="tab-content active" data-tab-group="sapporo-otaru">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">7/19: 大通公園都會序曲</h3>
                     <div class="grid md:grid-cols-2 gap-6">
-                        <div class="border-2 border-blue-200 rounded-lg p-4 bg-blue-50">
-                            <h4 class="font-bold mb-2">路線A: 全景視角 🏔️</h4>
-                            <p class="text-sm font-semibold mb-2">有珠山纜車 (Usuzan Ropeway)</p>
-                            <p class="text-sm">登上活火山，從高空俯瞰洞爺湖、昭和新山與太平洋的壯麗全景。山頂的「Mt. USU Terrace」是絕佳的觀景休憩點。</p>
-                        </div>
-                         <div class="border-2 border-green-200 rounded-lg p-4 bg-green-50">
-                            <h4 class="font-bold mb-2">路線B: 湖上寧靜 🚢</h4>
-                            <p class="text-sm font-semibold mb-2">洞爺湖汽船 (Toyako Kisen Cruise)</p>
-                            <p class="text-sm">搭乘仿古城堡設計的觀光船，在夏季還可登上湖心的中島，在森林中漫步，感受與世隔絕的寧靜。</p>
-                        </div>
-                    </div>
-                     <h4 class="font-bold text-lg mt-6 mb-4 text-gray-800">湖畔美食饗宴</h4>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🍽️ 望羊蹄</h4>
-                            <p class="text-sm">歷史悠久的老牌西餐廳，以多汁的漢堡排聞名。</p>
+                            <h4 class="font-semibold mb-2">🌳 大通公園夏日祭</h4>
+                            <p class="text-sm">您到訪時正值「札幌夏日祭」，公園化身為日本最大的露天啤酒花園，傍晚在此喝杯生啤、品嚐烤玉米，是絕佳的在地體驗。</p>
                         </div>
                         <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🍥 岡田屋</h4>
-                            <p class="text-sm">提供實惠的烏龍麵與丼飯，「白色善哉」甜品也很有名。</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🍔 HYDUNE</h4>
-                            <p class="text-sm">高品質的手工漢堡，適合想快速解決午餐的旅客。</p>
+                            <h4 class="font-semibold mb-2">🚇 札幌地下街網絡</h4>
+                            <p class="text-sm">連接大通與札幌站的巨大地下空間，不受天氣影響。可以探索「500M美術館」和可愛的「小鳥廣場」，順便買齊伴手禮。</p>
                         </div>
                     </div>
                 </div>
 
-                <div id="noboribetsu-transport" class="tab-content" data-tab-group="noboribetsu">
-                    <div class="space-y-8">
+                <div id="sapporo-day2" class="tab-content" data-tab-group="sapporo-otaru">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">7/22: 城市綠洲與神聖森林</h3>
+                     <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-2">⛩️ 北海道神宮</h4>
+                            <p class="text-sm">搭乘地鐵東西線至「円山公園」站。穿過靜謐的圓山公園，參拜這座守護北海道的百年神宮，幸運的話還能邂逅野生松鼠。</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-2">🐻 札幌市圓山動物園</h4>
+                            <p class="text-sm">北海道第一座動物園，必看亮點是北極熊館的「水中隧道」，能以獨特視角觀察北極熊游泳的英姿。中學生以下免費。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sapporo-day3" class="tab-content" data-tab-group="sapporo-otaru">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">7/23: 歐風童話與甜蜜體驗</h3>
+                     <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="font-semibold mb-2">🏰 白色戀人公園</h4>
+                            <p class="text-sm">充滿歐式風情的巧克力主題公園，是絕佳的雨天備案。免費區可欣賞玫瑰花園與歐風建築，付費區則可參觀生產線。</p>
+                        </div>
+                        <div class="bg-yellow-50 rounded-lg p-4 ring-2 ring-yellow-200">
+                            <h4 class="font-semibold mb-2">🍪 我的白色戀人繪畫課程</h4>
+                            <p class="text-sm">強烈推薦的付費體驗！在14公分的心型餅乾上自由作畫，創造獨一無二的紀念品。過程約30分鐘，建議提前預約。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="otaru-day" class="tab-content" data-tab-group="sapporo-otaru">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">7/24: 小樽運河浪漫一日</h3>
+                     <div class="space-y-6">
+                        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🚢 小樽運河遊覽船</h4><p class="text-sm">搭乘40分鐘的遊船是欣賞運河兩岸歷史倉庫的最佳方式，夜間遊船在瓦斯燈點亮後氣氛尤其浪漫。</p></div>
+                            <div class="bg-yellow-50 rounded-lg p-4 ring-2 ring-yellow-200"><h4 class="font-semibold mb-2">🍰 堺町通商店街</h4><p class="text-sm">小樽的購物美食天堂！必訪北一硝子、音樂盒堂，必吃 LeTAO 雙層乳酪蛋糕、北菓樓泡芙與六花亭限定甜點。</p></div>
+                            <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🐧 おたる水族館</h4><p class="text-sm">以「自由奔放」的動物表演聞名，企鵝散步和時而出槌的海獅秀充滿樂趣，是適合所有人的開心景點。</p></div>
+                        </div>
+                        <div>
+                             <h4 class="font-bold text-lg mb-2 text-gray-800">交通方式</h4>
+                             <p class="text-sm text-gray-600">從札幌搭乘 JR「快速Airport」號約35分鐘，高速巴士約1小時，兩者皆為直達，非常便利。</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="day-trips" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8">札幌近郊一日遊 (新版)</h2>
+             <div class="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+                <div class="border-b border-gray-200 mb-6">
+                    <nav class="flex justify-center -mb-px space-x-6" data-tab-group="daytrips">
+                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600 active" data-tab="daytrip-noboribetsu">7/20: 登別</button>
+                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="daytrip-shikotsu">7/21: 支笏湖</button>
+                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="daytrip-transport">交通比較</button>
+                    </nav>
+                </div>
+                
+                <div id="daytrip-noboribetsu" class="tab-content active" data-tab-group="daytrips">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">7/20: 登別地熱奇觀一日遊</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🌋 地獄谷</h4><p class="text-sm">沿步道近觀白煙繚繞的火山峽谷，感受地球的呼吸。</p></div>
+                        <div class="bg-yellow-50 rounded-lg p-4 ring-2 ring-yellow-200"><h4 class="font-semibold mb-2">♨️ 天然足湯</h4><p class="text-sm">健行至大湯沼川，將雙腳浸入溫泉溪流，享受免費的天然SPA。</p></div>
+                        <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🍜 地獄拉麵</h4><p class="text-sm">在「味の大王」挑戰可自選辣度的登別名物拉麵。</p></div>
+                    </div>
+                </div>
+
+                <div id="daytrip-shikotsu" class="tab-content" data-tab-group="daytrips">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">7/21: 靜謐支笏湖藍一日遊</h3>
+                    <p class="mb-4 text-sm text-gray-600">在經歷登別的長途旅程後，第二天安排步調更悠閒的支笏湖之旅是絕佳選擇。這裡以日本頂級清澈的水質聞名，能帶給您寧靜與療癒感。</p>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-blue-50 rounded-lg p-4 ring-2 ring-blue-200"><h4 class="font-semibold mb-2">🚤 水中遊覽船</h4><p class="text-sm">搭乘玻璃底船，親眼見證「支笏湖藍」的澄澈水下世界。</p></div>
+                        <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🏞️ 湖畔散策</h4><p class="text-sm">漫步湖畔，尋找朱紅色的「山線鐵橋」，享受悠閒時光。</p></div>
+                        <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🚌 交通便利</h4><p class="text-sm">從札幌出發總耗時約1.5小時，比去登別更省時，遊玩時間更充裕。</p></div>
+                    </div>
+                </div>
+
+                <div id="daytrip-transport" class="tab-content" data-tab-group="daytrips">
+                     <h3 class="font-bold text-xl mb-4 text-gray-800">札幌 ⇄ 近郊 交通攻略</h3>
+                     <div class="space-y-8">
                         <div>
                             <h4 class="font-bold text-lg mb-2 text-gray-800">札幌 ⇄ 登別 交通比較</h4>
-                            <p class="text-sm text-gray-600 mb-4">從札幌前往登別，主要有JR與高速巴士兩種選擇。巴士雖然時間稍長，但價格更優且可直達溫泉區，免去轉乘，便利性高。</p>
+                            <p class="text-sm text-gray-600 mb-4">巴士雖時間稍長，但價格優且可直達溫泉區，免去轉乘，便利性高。</p>
                             <div class="chart-container">
                                 <canvas id="noboribetsuTransportChart"></canvas>
                             </div>
                         </div>
                         <div>
-                            <h4 class="font-bold text-lg mb-2 text-gray-800">登別 → 洞爺湖 轉乘流程</h4>
-                            <p class="text-sm text-gray-600 mb-4">由於直達巴士停駛，兩地間的移動需透過巴士與JR接駁。流程如下：</p>
+                            <h4 class="font-bold text-lg mb-2 text-gray-800">札幌 → 支笏湖 轉乘流程</h4>
+                            <p class="text-sm text-gray-600 mb-4">前往支笏湖需在千歲站轉乘，請務必先查好巴士時刻表。</p>
                             <div class="flex flex-wrap items-center justify-center bg-gray-50 p-4 rounded-lg">
-                                <div class="process-step flex-col"><span>🚌</span><span class="text-sm">登別溫泉</span></div>
+                                <div class="process-step flex-col"><span>🚆</span><span class="text-sm">JR札幌站</span></div>
                                 <div class="process-arrow">→</div>
-                                <div class="process-step flex-col"><span>🚉</span><span class="text-sm">JR登別站</span></div>
+                                <div class="process-step flex-col"><span>🚉</span><span class="text-sm">JR千歲站</span></div>
                                 <div class="process-arrow">→</div>
-                                <div class="process-step flex-col"><span>🚆</span><span class="text-sm">JR洞爺站</span></div>
-                                <div class="process-arrow">→</div>
-                                <div class="process-step flex-col"><span>🚌</span><span class="text-sm">洞爺湖溫泉</span></div>
+                                <div class="process-step flex-col"><span>🚌</span><span class="text-sm">支笏湖</span></div>
                             </div>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-lg mb-2 text-gray-800">洞爺湖 → 札幌 返回方案</h4>
-                            <p class="text-sm text-gray-600">返回札幌的最佳選擇是搭乘從洞爺湖溫泉直達札幌車站的高速巴士（需預約），省時省力。</p>
-                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="biei" class="mb-16 scroll-mt-20">
-            <h2 class="text-3xl font-bold text-center mb-2">美瑛一日遊</h2>
-            <p class="text-center text-gray-600 mb-8">從富良野延伸，探索如詩如畫的丘陵田園風光。</p>
-            <div class="bg-white rounded-2xl shadow-lg p-4 md:p-6">
+        <section id="furano-biei" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-8">富良野花海 & 美瑛畫卷</h2>
+             <div class="bg-white rounded-2xl shadow-lg p-4 md:p-6">
                 <div class="border-b border-gray-200 mb-6">
-                    <nav class="flex justify-center -mb-px space-x-6" data-tab-group="biei">
-                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600 active" data-tab="biei-highlights">行程亮點</button>
-                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="biei-transport">交通攻略</button>
-                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="biei-food">美食地圖</button>
+                    <nav class="flex justify-center -mb-px space-x-6" data-tab-group="furano-biei">
+                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600 active" data-tab="furano-day">7/25: 富良野</button>
+                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="biei-day">7/26: 美瑛</button>
+                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="biei-transport">美瑛交通</button>
                     </nav>
                 </div>
                 
-                <div id="biei-highlights" class="tab-content active" data-tab-group="biei">
-                    <h3 class="font-bold text-xl mb-4 text-gray-800">大地畫布巡禮</h3>
+                <div id="furano-day" class="tab-content active" data-tab-group="furano-biei">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">7/25: 富良野 - 沉醉於花之盛宴</h3>
                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🌳 拼布之路</h4>
-                            <p class="text-sm">探訪「Ken and Mary之樹」與「七星之樹」等廣告名景，在「北西之丘展望公園」俯瞰多彩農田。</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🌈 全景之路</h4>
-                            <p class="text-sm">遊覽廣達15公頃的「四季彩之丘」花田，並在「新榮之丘展望公園」等待一場詩畫般的日落。</p>
-                        </div>
-                         <div class="bg-blue-50 rounded-lg p-4 ring-2 ring-blue-200">
-                            <h4 class="font-semibold mb-2">💧 青池 (Aoiike)</h4>
-                            <p class="text-sm">此行壓軸。因礦物質而呈現不可思議的藍色湖水，搭配枯槁的落葉松，營造出超現實的靜謐氛圍。</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🌊 白鬚瀑布</h4>
-                            <p class="text-sm">位於青池上游，是造就青池夢幻色彩的源頭。從岩壁縫隙湧出的地下水瀑布，景觀獨特。</p>
-                        </div>
+                        <div class="bg-purple-50 rounded-lg p-4 ring-2 ring-purple-200"><h4 class="font-semibold mb-2">🌸 富田農場</h4><p class="text-sm">富良野薰衣草的代名詞，除了紫色花田，還有色彩繽紛的彩虹花田，可免費入場。</p></div>
+                        <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🐮 くまげら</h4><p class="text-sm">品嚐入口即化的「富良野和牛烤牛肉蓋飯」。</p></div>
+                        <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🍛 唯我独尊</h4><p class="text-sm">隱身林間的咖哩名店，自家製香腸歐姆蛋咖哩是招牌。</p></div>
                     </div>
                 </div>
-                
-                <div id="biei-transport" class="tab-content" data-tab-group="biei">
+
+                <div id="biei-day" class="tab-content" data-tab-group="furano-biei">
+                    <h3 class="font-bold text-xl mb-4 text-gray-800">7/26: 美瑛 - 馳騁於大地畫布</h3>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🌳 拼布之路</h4><p class="text-sm">探訪「Ken & Mary之樹」與「七星之樹」等廣告名景。</p></div>
+                        <div class="bg-gray-50 rounded-lg p-4"><h4 class="font-semibold mb-2">🌈 全景之路</h4><p class="text-sm">遊覽廣達15公頃的「四季彩之丘」花田，景色壯觀。</p></div>
+                        <div class="bg-blue-50 rounded-lg p-4 ring-2 ring-blue-200"><h4 class="font-semibold mb-2">💧 青池 & 白鬚瀑布</h4><p class="text-sm">此行壓軸。探訪不可思議的藍色湖水，與其上游的白鬚瀑布。</p></div>
+                    </div>
+                </div>
+
+                <div id="biei-transport" class="tab-content" data-tab-group="furano-biei">
                      <h3 class="font-bold text-xl mb-4 text-gray-800">美瑛地區移動方式</h3>
-                     <p class="text-sm text-gray-600 mb-4">美瑛景點分散，旺季人多，交通選擇至關重要。以下是不同方式的比較：</p>
+                     <p class="text-sm text-gray-600 mb-4">旺季人多，景點分散，交通選擇至關重要。觀光計程車雖貴，但品質與效率最高，是團體首選。</p>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left">
-                            <thead>
-                                <tr class="bg-gray-100">
-                                    <th class="p-3 font-semibold text-sm">方式</th>
-                                    <th class="p-3 font-semibold text-sm">成本</th>
-                                    <th class="p-3 font-semibold text-sm">靈活性</th>
-                                    <th class="p-3 font-semibold text-sm">壓力指數</th>
-                                    <th class="p-3 font-semibold text-sm">專家建議</th>
-                                </tr>
-                            </thead>
+                            <thead><tr class="bg-gray-100"><th class="p-3 font-semibold text-sm">方式</th><th class="p-3 font-semibold text-sm">成本</th><th class="p-3 font-semibold text-sm">靈活性</th><th class="p-3 font-semibold text-sm">壓力指數</th><th class="p-3 font-semibold text-sm">專家建議</th></tr></thead>
                             <tbody>
-                                <tr class="border-b">
-                                    <td class="p-3 font-medium">🚗 租車自駕</td>
-                                    <td class="p-3">中</td>
-                                    <td class="p-3 text-green-600 font-bold">最高</td>
-                                    <td class="p-3 text-red-600 font-bold">高</td>
-                                    <td class="p-3 text-xs">自由但旺季停車是噩夢。</td>
-                                </tr>
-                                <tr class="border-b">
-                                    <td class="p-3 font-medium">🚌 觀光巴士</td>
-                                    <td class="p-3">中</td>
-                                    <td class="p-3 text-red-600 font-bold">低</td>
-                                    <td class="p-3 text-green-600 font-bold">低</td>
-                                    <td class="p-3 text-xs">省心省力，適合不想規劃者。</td>
-                                </tr>
-                                <tr class="border-b bg-blue-50">
-                                    <td class="p-3 font-medium">🚕 觀光計程車</td>
-                                    <td class="p-3">高</td>
-                                    <td class="p-3 text-green-600 font-bold">高</td>
-                                    <td class="p-3 text-green-600 font-bold">極低</td>
-                                    <td class="p-3 text-xs">高品質首選，司機兼導遊，效率極高。</td>
-                                </tr>
-                                <tr>
-                                    <td class="p-3 font-medium">🚲 電動自行車</td>
-                                    <td class="p-3">低</td>
-                                    <td class="p-3">中</td>
-                                    <td class="p-3">中</td>
-                                    <td class="p-3 text-xs">適合體力好者，但丘陵起伏大。</td>
-                                </tr>
+                                <tr class="border-b"><td class="p-3 font-medium">🚗 租車自駕</td><td class="p-3">中</td><td class="p-3 text-green-600 font-bold">最高</td><td class="p-3 text-red-600 font-bold">高</td><td class="p-3 text-xs">旺季停車是噩夢。</td></tr>
+                                <tr class="border-b"><td class="p-3 font-medium">🚌 觀光巴士</td><td class="p-3">中</td><td class="p-3 text-red-600 font-bold">低</td><td class="p-3 text-green-600 font-bold">低</td><td class="p-3 text-xs">省心省力，但無法自由停留。</td></tr>
+                                <tr class="border-b bg-blue-50"><td class="p-3 font-medium">🚕 觀光計程車</td><td class="p-3">高</td><td class="p-3 text-green-600 font-bold">高</td><td class="p-3 text-green-600 font-bold">極低</td><td class="p-3 text-xs">品質首選，司機兼導遊，效率極高。</td></tr>
+                                <tr><td class="p-3 font-medium">🚲 電動自行車</td><td class="p-3">低</td><td class="p-3">中</td><td class="p-3">中</td><td class="p-3 text-xs">適合體力好者，但丘陵起伏大。</td></tr>
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <div id="biei-food" class="tab-content" data-tab-group="biei">
-                    <h3 class="font-bold text-xl mb-4 text-gray-800">品味美瑛的獨特風味</h3>
-                     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="bg-yellow-50 rounded-lg p-4 ring-2 ring-yellow-200">
-                            <h4 class="font-semibold mb-2">🍤 洋食とcafe じゅんぺい</h4>
-                            <p class="text-sm">傳奇級的「炸蝦飯」，碩大酥脆的炸蝦鋪在飯上，份量十足，人氣極高需有排隊的心理準備。</p>
-                        </div>
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🍛 ファミリーレストラン だいまる</h4>
-                            <p class="text-sm">「美瑛咖哩烏龍麵」發源地，Q彈烏龍麵沾上香濃咖哩醬汁，創意十足的在地美食。</p>
-                        </div>
-                         <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🧑‍🍳 RESTAURANT ASPERGES</h4>
-                            <p class="text-sm">米其林星級法餐，以美瑛頂級蔬菜為主角，是頂級的味覺饗宴（需預約）。</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="sapporo" class="scroll-mt-20">
-            <h2 class="text-3xl font-bold text-center mb-2">札幌增補建議</h2>
-            <p class="text-center text-gray-600 mb-8">為您的札幌時光，提供一些額外的雨天備案或深度體驗。</p>
-            <div class="bg-white rounded-2xl shadow-lg p-4 md:p-6">
-                 <div class="border-b border-gray-200 mb-6">
-                    <nav class="flex justify-center -mb-px space-x-6" data-tab-group="sapporo">
-                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600 active" data-tab="sapporo-tanuki">狸小路漫步</button>
-                        <button class="tab-btn py-4 px-1 text-gray-500 hover:text-blue-600" data-tab="sapporo-beer">札幌啤酒園</button>
-                    </nav>
-                </div>
-
-                <div id="sapporo-tanuki" class="tab-content active" data-tab-group="sapporo">
-                    <h3 class="font-bold text-xl mb-4 text-gray-800">狸小路的靈魂漫步</h3>
-                    <p class="mb-4 text-gray-600">北海道最古老、規模最大的商店街，全長900公尺的拱廊天頂，是全天候的理想去處。從1丁目到7丁目，每個街區都有不同風情，值得深入探索。</p>
-                    <div class="grid md:grid-cols-2 gap-4 text-sm">
-                        <p><strong><span class="text-blue-600">●</span> 1-2丁目：</strong> 在地生活氣息，尋找湯咖哩名店入口。</p>
-                        <p><strong><span class="text-blue-600">●</span> 3-4丁目：</strong> 核心地帶，可見市電穿過。</p>
-                        <p><strong><span class="text-blue-600">●</span> 5丁目：</strong> 參拜本陣狸大明神社，祈求好運。</p>
-                        <p><strong><span class="text-blue-600">●</span> 6-7丁目：</strong> 本地氛圍濃厚，隱藏許多個性居酒屋。</p>
-                    </div>
-                </div>
-                <div id="sapporo-beer" class="tab-content" data-tab-group="sapporo">
-                    <h3 class="font-bold text-xl mb-4 text-gray-800">在札幌啤酒園為歷史乾杯</h3>
-                    <p class="mb-4 text-gray-600">這不僅是參觀博物館，更是一場沉浸式的文化體驗，深入了解北海道最自豪的產業。參觀後，強烈建議您體驗北海道的靈魂料理——成吉思汗烤肉。</p>
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="bg-gray-50 rounded-lg p-4">
-                            <h4 class="font-semibold mb-2">🏛️ 啤酒博物館</h4>
-                            <p class="text-sm">可免費參觀了解札幌啤酒的歷史，或參加付費導覽品嚐限定復刻版啤酒。</p>
-                        </div>
-                        <div class="bg-yellow-50 rounded-lg p-4 ring-2 ring-yellow-200">
-                            <h4 class="font-semibold mb-2">🍖 成吉思汗烤肉</h4>
-                            <p class="text-sm">在歷史感的紅磚建築中，享用鮮嫩的羊肉與蔬菜燒烤，搭配工廠直送的生啤酒，是無與倫比的享受（強烈建議預約）。</p>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -417,65 +321,64 @@
     </main>
 
     <footer class="text-center py-8 mt-8 border-t">
-        <p class="text-sm text-gray-500">此互動行程由 AI 根據提供的報告生成。</p>
+        <p class="text-sm text-gray-500">此互動行程由 AI 根據提供的報告生成 (v2.1 - 錯誤修正)。</p>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             
-            // Tab functionality
-            const tabGroups = {};
-            document.querySelectorAll('[data-tab-group]').forEach(el => {
-                const groupName = el.dataset.tabGroup;
-                if (!tabGroups[groupName]) {
-                    tabGroups[groupName] = { buttons: [], contents: [] };
-                }
-                if (el.tagName === 'BUTTON') {
-                    tabGroups[groupName].buttons.push(el);
-                } else {
-                    tabGroups[groupName].contents.push(el);
-                }
-            });
+            // Tab functionality (Corrected version)
+            document.querySelectorAll('nav[data-tab-group]').forEach(navElement => {
+                const groupName = navElement.dataset.tabGroup;
+                const buttons = navElement.querySelectorAll('.tab-btn');
+                const contentPanels = document.querySelectorAll(`.tab-content[data-tab-group="${groupName}"]`);
 
-            Object.values(tabGroups).forEach(group => {
-                group.buttons.forEach(button => {
+                buttons.forEach(button => {
                     button.addEventListener('click', () => {
-                        group.buttons.forEach(btn => btn.classList.remove('active'));
+                        // Deactivate all buttons in this group
+                        buttons.forEach(btn => btn.classList.remove('active'));
+                        // Activate the clicked button
                         button.classList.add('active');
-                        
+
                         const tabId = button.dataset.tab;
-                        group.contents.forEach(content => {
-                            if (content.id === tabId) {
-                                content.classList.add('active');
-                            } else {
-                                content.classList.remove('active');
+
+                        // Deactivate all content panels in this group
+                        contentPanels.forEach(panel => {
+                            panel.classList.remove('active');
+                            // Check if the panel's ID matches the target tab ID
+                            if (panel.id === tabId) {
+                                panel.classList.add('active');
                             }
                         });
                     });
                 });
             });
 
+
             // Smooth scrolling for nav links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            document.querySelectorAll('a.nav-link').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
+                    const targetElement = document.querySelector(this.getAttribute('href'));
+                    if(targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
                 });
             });
 
             // Chart.js: Noboribetsu Transport Comparison
             const ctx = document.getElementById('noboribetsuTransportChart');
             if(ctx) {
-                const noboribetsuTransportChart = new Chart(ctx.getContext('2d'), {
+                new Chart(ctx.getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: ['JR特急列車', '高速巴士'],
                         datasets: [
                             {
                                 label: '所需時間 (分鐘)',
-                                data: [75, 105],
+                                data: [75, 110],
                                 backgroundColor: 'rgba(59, 130, 246, 0.6)',
                                 borderColor: 'rgba(59, 130, 246, 1)',
                                 borderWidth: 1,
@@ -499,23 +402,15 @@
                                 type: 'linear',
                                 display: true,
                                 position: 'left',
-                                title: {
-                                    display: true,
-                                    text: '時間 (分鐘)'
-                                },
+                                title: { display: true, text: '時間 (分鐘)' },
                                 beginAtZero: true
                             },
                             yCost: {
                                 type: 'linear',
                                 display: true,
                                 position: 'right',
-                                title: {
-                                    display: true,
-                                    text: '費用 (日圓)'
-                                },
-                                grid: {
-                                    drawOnChartArea: false, 
-                                },
+                                title: { display: true, text: '費用 (日圓)' },
+                                grid: { drawOnChartArea: false },
                                 beginAtZero: true
                             }
                         },
@@ -524,9 +419,7 @@
                                 callbacks: {
                                     label: function(context) {
                                         let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
+                                        if (label) label += ': ';
                                         if (context.parsed.y !== null) {
                                             if (context.dataset.label.includes('費用')) {
                                                label += new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(context.parsed.y);
