@@ -1,0 +1,333 @@
+// Simple in-browser state for prototype purpose only
+const STORAGE_KEYS = {
+  loggedIn: 'eink.loggedIn',
+  doctors: 'eink.doctors',
+  displays: 'eink.displays',
+};
+
+function getLoggedIn() {
+  return localStorage.getItem(STORAGE_KEYS.loggedIn) === 'true';
+}
+
+function setLoggedIn(value) {
+  localStorage.setItem(STORAGE_KEYS.loggedIn, value ? 'true' : 'false');
+}
+
+function seedDoctorsIfNeeded() {
+  const existing = localStorage.getItem(STORAGE_KEYS.doctors);
+  if (existing) return;
+  const seed = [
+    { id: crypto.randomUUID(), chinese: '陳大文醫生', english: 'Dr Simon CHAN' },
+    { id: crypto.randomUUID(), chinese: '李小美醫生', english: 'Dr Emily LEE' },
+    { id: crypto.randomUUID(), chinese: '黃志強醫生', english: 'Dr Alex WONG' },
+  ];
+  localStorage.setItem(STORAGE_KEYS.doctors, JSON.stringify(seed));
+}
+
+function getDoctors() {
+  seedDoctorsIfNeeded();
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.doctors) || '[]'); }
+  catch { return []; }
+}
+
+function saveDoctors(doctors) {
+  localStorage.setItem(STORAGE_KEYS.doctors, JSON.stringify(doctors));
+}
+
+function addDoctor(chinese, english) {
+  const doctors = getDoctors();
+  doctors.push({ id: crypto.randomUUID(), chinese, english });
+  saveDoctors(doctors);
+}
+
+function updateDoctor(id, chinese, english) {
+  const doctors = getDoctors().map(d => d.id === id ? { ...d, chinese, english } : d);
+  saveDoctors(doctors);
+}
+
+function deleteDoctor(id) {
+  const doctors = getDoctors().filter(d => d.id !== id);
+  saveDoctors(doctors);
+}
+
+function seedDisplaysIfNeeded() {
+  const existing = localStorage.getItem(STORAGE_KEYS.displays);
+  if (existing) return;
+  const now = Date.now();
+  const displays = Array.from({ length: 15 }, (_, i) => ({
+    id: `room-${i + 1}`,
+    label: `Room ${i + 1}`,
+    signalStrength: Math.floor(Math.random() * 5) + 1, // 1..5
+    online: Math.random() > 0.1,
+    battery: Math.floor(Math.random() * 51) + 50, // 50..100
+    lastUpdate: now - Math.floor(Math.random() * 1000 * 60 * 60),
+    doctorId: null,
+    standby: false,
+  }));
+  localStorage.setItem(STORAGE_KEYS.displays, JSON.stringify(displays));
+}
+
+function getDisplays() {
+  seedDisplaysIfNeeded();
+  try {
+    const list = JSON.parse(localStorage.getItem(STORAGE_KEYS.displays) || '[]');
+    // Migration: collapse doctorChineseId/doctorEnglishId into doctorId if present
+    let migrated = false;
+    const normalized = list.map((d) => {
+      if (d.doctorId) return d;
+      if (typeof d.doctorChineseId !== 'undefined' || typeof d.doctorEnglishId !== 'undefined') {
+        migrated = true;
+        return {
+          ...d,
+          doctorId: d.doctorEnglishId || d.doctorChineseId || null,
+          doctorChineseId: undefined,
+          doctorEnglishId: undefined,
+        };
+      }
+      return d;
+    });
+    if (migrated) saveDisplays(normalized);
+    return normalized;
+  }
+  catch { return []; }
+}
+
+function saveDisplays(displays) {
+  localStorage.setItem(STORAGE_KEYS.displays, JSON.stringify(displays));
+}
+
+function setAllStandby(value) {
+  const displays = getDisplays().map(d => ({ ...d, standby: value }));
+  saveDisplays(displays);
+}
+
+// UI helpers
+function formatTime(ts) {
+  const d = new Date(ts);
+  return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
+}
+
+function createSignalBars(level) {
+  const el = document.createElement('div');
+  el.className = 'bars';
+  for (let i = 1; i <= 5; i += 1) {
+    const bar = document.createElement('div');
+    bar.className = 'bar' + (i <= level ? ' on' : '');
+    el.appendChild(bar);
+  }
+  return el;
+}
+
+function renderDashboard() {
+  const tbody = document.getElementById('displaysBody');
+  if (!tbody) return;
+  const doctors = getDoctors();
+  const displays = getDisplays();
+  tbody.innerHTML = '';
+
+  const buildDoctorSelect = (selectedId) => {
+    const select = document.createElement('select');
+    const empty = document.createElement('option');
+    empty.value = '';
+    empty.textContent = '—';
+    select.appendChild(empty);
+    doctors.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = `${d.chinese} / ${d.english}`;
+      if (d.id === selectedId) opt.selected = true;
+      select.appendChild(opt);
+    });
+    return select;
+  };
+
+  displays.forEach((disp, idx) => {
+    const tr = document.createElement('tr');
+
+    // Room label
+    const tdRoom = document.createElement('td');
+    tdRoom.textContent = disp.label;
+    tr.appendChild(tdRoom);
+
+    // Signal
+    const tdSig = document.createElement('td');
+    tdSig.appendChild(createSignalBars(disp.signalStrength));
+    tr.appendChild(tdSig);
+
+    // Online
+    const tdOnline = document.createElement('td');
+    const dot = document.createElement('span');
+    dot.className = 'dot ' + (disp.online ? 'online' : 'offline');
+    const label = document.createElement('span');
+    label.textContent = disp.online ? 'Online' : 'Offline';
+    label.style.color = disp.online ? 'inherit' : 'var(--danger)';
+    const wrap = document.createElement('div');
+    wrap.className = 'status';
+    wrap.append(dot, label);
+    tdOnline.appendChild(wrap);
+    tr.appendChild(tdOnline);
+
+    // Battery
+    const tdBat = document.createElement('td');
+    tdBat.className = 'battery';
+    tdBat.textContent = `${disp.battery}%`;
+    tr.appendChild(tdBat);
+
+    // Last Update
+    const tdTs = document.createElement('td');
+    tdTs.textContent = formatTime(disp.lastUpdate);
+    tr.appendChild(tdTs);
+
+    // Doctor (single combined)
+    const tdDoc = document.createElement('td');
+    const selDoc = buildDoctorSelect(disp.doctorId);
+    selDoc.addEventListener('change', () => {
+      const displaysNow = getDisplays();
+      displaysNow[idx].doctorId = selDoc.value || null;
+      saveDisplays(displaysNow);
+    });
+    tdDoc.appendChild(selDoc);
+    tr.appendChild(tdDoc);
+
+    // Actions
+    const tdAct = document.createElement('td');
+    const standbyTag = document.createElement('span');
+    const updateStandbyTag = () => {
+      standbyTag.className = 'standby';
+      standbyTag.style.display = 'inline-flex';
+      standbyTag.style.alignItems = 'center';
+      standbyTag.style.gap = '6px';
+      standbyTag.style.background = disp.standby ? '#111' : '#0b6a0b';
+      if (disp.standby) {
+        standbyTag.innerHTML = '<img src="assets/hhh_logo.svg" alt="Standby" style="height:14px;border-radius:3px" /> <span>Standby</span>';
+      } else {
+        standbyTag.textContent = 'Active';
+      }
+    };
+    updateStandbyTag();
+
+    const btnStandby = document.createElement('button');
+    btnStandby.className = 'btn';
+    btnStandby.textContent = disp.standby ? 'Wake' : 'Standby';
+    btnStandby.addEventListener('click', () => {
+      const displaysNow = getDisplays();
+      displaysNow[idx].standby = !displaysNow[idx].standby;
+      displaysNow[idx].lastUpdate = Date.now();
+      saveDisplays(displaysNow);
+      disp.standby = displaysNow[idx].standby;
+      btnStandby.textContent = disp.standby ? 'Wake' : 'Standby';
+      tdTs.textContent = formatTime(displaysNow[idx].lastUpdate);
+      updateStandbyTag();
+    });
+
+    tdAct.append(standbyTag, document.createTextNode(' '), btnStandby);
+    tr.appendChild(tdAct);
+
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('refreshStatusBtn')?.addEventListener('click', () => {
+    // Simulate status refresh
+    const updated = getDisplays().map(d => ({
+      ...d,
+      signalStrength: Math.floor(Math.random() * 5) + 1,
+      battery: Math.max(10, Math.min(100, d.battery - Math.floor(Math.random() * 3))),
+      lastUpdate: Date.now(),
+    }));
+    saveDisplays(updated);
+    renderDashboard();
+  });
+
+  document.getElementById('setAllStandbyBtn')?.addEventListener('click', () => {
+    setAllStandby(true);
+    renderDashboard();
+  });
+}
+
+function renderSettings() {
+  const body = document.getElementById('doctorsBody');
+  if (!body) return;
+  const doctors = getDoctors();
+  body.innerHTML = '';
+  doctors.forEach((d, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i + 1}</td><td>${d.chinese}</td><td>${d.english}</td>`;
+    const tdAct = document.createElement('td');
+    const btnEdit = document.createElement('button');
+    btnEdit.className = 'btn';
+    btnEdit.textContent = 'Edit';
+    btnEdit.addEventListener('click', () => {
+      const chinese = prompt('Chinese name', d.chinese);
+      if (chinese === null) return;
+      const english = prompt('English name', d.english);
+      if (english === null) return;
+      updateDoctor(d.id, chinese.trim(), english.trim());
+      renderSettings();
+    });
+    const btnDel = document.createElement('button');
+    btnDel.className = 'btn';
+    btnDel.textContent = 'Delete';
+    btnDel.addEventListener('click', () => {
+      if (!confirm('Delete this doctor?')) return;
+      deleteDoctor(d.id);
+      renderSettings();
+    });
+    tdAct.append(btnEdit, document.createTextNode(' '), btnDel);
+    tr.appendChild(tdAct);
+    body.appendChild(tr);
+  });
+
+  const form = document.getElementById('doctorForm');
+  const chineseInput = document.getElementById('doctorChinese');
+  const englishInput = document.getElementById('doctorEnglish');
+  const clearBtn = document.getElementById('clearFormBtn');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const c = chineseInput.value.trim();
+    const eName = englishInput.value.trim();
+    if (!c || !eName) return;
+    addDoctor(c, eName);
+    chineseInput.value = '';
+    englishInput.value = '';
+    renderSettings();
+  });
+  clearBtn?.addEventListener('click', () => {
+    chineseInput.value = '';
+    englishInput.value = '';
+    chineseInput.focus();
+  });
+}
+
+function wireCommon() {
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      setLoggedIn(false);
+      window.location.href = 'index.html';
+    });
+  }
+}
+
+function renderHome() {
+  const form = document.getElementById('loginForm');
+  if (!form) return;
+  document.getElementById('logoutBtn')?.setAttribute('hidden', '');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value.trim();
+    if (!u || !p) return;
+    setLoggedIn(true);
+    window.location.href = 'dashboard.html';
+  });
+}
+
+// Router per page
+document.addEventListener('DOMContentLoaded', () => {
+  wireCommon();
+  const page = document.body.getAttribute('data-page');
+  if (page === 'home') renderHome();
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'settings') renderSettings();
+});
+

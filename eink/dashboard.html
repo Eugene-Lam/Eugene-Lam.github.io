@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E‑ink Admin • Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="app.js"></script>
+  </head>
+  <body data-page="dashboard">
+    <header class="navbar">
+      <div class="nav-left">
+        <div class="logos">
+          <img src="assets/ha_logo.jpg" alt="HA Logo" class="logo" />
+          <img src="assets/hhh_logo.jpg" alt="HHH Logo" class="logo" />
+        </div>
+        <h1 class="brand">專科門診 SOPD</h1>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a class="active" href="dashboard.html">Dashboard</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <div class="nav-right">
+        <button id="logoutBtn" class="btn btn-ghost">Logout</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <h2 class="page-title">E‑ink Displays</h2>
+      <div class="controls-row">
+        <button id="refreshStatusBtn" class="btn">Refresh Status</button>
+        <button id="setAllStandbyBtn" class="btn">Set ALL to Standby</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Room</th>
+              <th>Signal</th>
+              <th>Online</th>
+              <th>Battery</th>
+              <th>Last Update</th>
+              <th>Doctor</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="displaysBody"></tbody>
+        </table>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span>HA • HHH — E‑ink Admin Prototype</span>
+    </footer>
+  </body>
+  </html>
+

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E‑ink Admin • Home</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script defer src="app.js"></script>
+  </head>
+  <body data-page="home">
+    <header class="navbar">
+      <div class="nav-left">
+        <div class="logos">
+          <img src="assets/ha_logo.jpg" alt="HA Logo" class="logo" />
+          <img src="assets/hhh_logo.jpg" alt="HHH Logo" class="logo" />
+        </div>
+        <h1 class="brand">專科門診 SOPD</h1>
+      </div>
+      <nav class="nav-links">
+        <a class="active" href="index.html">Home</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="settings.html">Settings</a>
+      </nav>
+      <div class="nav-right">
+        <button id="logoutBtn" class="btn btn-ghost" hidden>Logout</button>
+      </div>
+    </header>
+
+    <main class="container narrow">
+      <h2 class="page-title">Login</h2>
+      <form id="loginForm" class="card" autocomplete="on">
+        <label class="field">
+          <span>Account</span>
+          <input id="username" name="username" type="text" placeholder="Enter user account" required />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input id="password" name="password" type="password" placeholder="Enter password" required />
+        </label>
+        <button type="submit" class="btn btn-primary full">Login</button>
+      </form>
+    </main>
+
+    <footer class="footer">
+      <span>HA • HHH — E‑ink Admin Prototype</span>
+    </footer>
+  </body>
+  </html>
+
