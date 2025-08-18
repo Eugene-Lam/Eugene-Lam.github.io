@@ -1,9 +1,22 @@
 // Simple in-browser state for prototype purpose only
+const APP_VERSION = '1.4';
 const STORAGE_KEYS = {
+  version: 'eink.version',
   loggedIn: 'eink.loggedIn',
   doctors: 'eink.doctors',
   displays: 'eink.displays',
 };
+
+function checkVersion() {
+  const storedVersion = localStorage.getItem(STORAGE_KEYS.version);
+  if (storedVersion !== APP_VERSION) {
+    // Clear all data when version changes
+    localStorage.clear();
+    localStorage.setItem(STORAGE_KEYS.version, APP_VERSION);
+    return true; // Indicates data was reset
+  }
+  return false; // No reset needed
+}
 
 function getLoggedIn() {
   return localStorage.getItem(STORAGE_KEYS.loggedIn) === 'true';
@@ -20,8 +33,8 @@ function seedDoctorsIfNeeded() {
     { id: crypto.randomUUID(), chinese: '陳大文醫生', english: 'Dr Simon CHAN', category: 'Doctor' },
     { id: crypto.randomUUID(), chinese: '李小美醫生', english: 'Dr Emily LEE', category: 'Doctor' },
     { id: crypto.randomUUID(), chinese: '黃志強醫生', english: 'Dr Alex WONG', category: 'Doctor' },
-    { id: crypto.randomUUID(), chinese: '王治療師', english: 'Therapist WONG', category: 'Staff' },
-    { id: crypto.randomUUID(), chinese: '李護士', english: 'Nurse LEE', category: 'Staff' },
+    { id: crypto.randomUUID(), chinese: '王小美', english: 'Therapist WONG', category: 'Staff' },
+    { id: crypto.randomUUID(), chinese: '李志強', english: 'Nurse LEE', category: 'Staff' },
   ];
   localStorage.setItem(STORAGE_KEYS.doctors, JSON.stringify(seed));
 }
@@ -383,6 +396,9 @@ function renderHome() {
 
 // Router per page
 document.addEventListener('DOMContentLoaded', () => {
+  // Check version and reset data if needed
+  const wasReset = checkVersion();
+  
   wireCommon();
   const page = document.body.getAttribute('data-page');
   if (page === 'home') renderHome();
