@@ -30,9 +30,9 @@
     </header>
 
     <main class="container">
-      <h2 class="page-title">Doctor Directory</h2>
+      <h2 class="page-title">Staff Directory</h2>
       <form id="doctorForm" class="card row-gap">
-        <div class="grid two">
+        <div class="grid three">
           <label class="field">
             <span>Chinese Name</span>
             <input id="doctorChinese" type="text" placeholder="e.g. 陳大文醫生" />
@@ -41,9 +41,17 @@
             <span>English Name</span>
             <input id="doctorEnglish" type="text" placeholder="e.g. Dr Simon CHAN" />
           </label>
+          <label class="field">
+            <span>Category</span>
+            <select id="doctorCategory">
+              <option value="Doctor">Doctor</option>
+              <!-- <option value="Therapist">Therapist</option> -->
+              <option value="Staff">Staff</option>
+            </select>
+          </label>
         </div>
         <div class="actions">
-          <button type="submit" class="btn btn-primary">Add Doctor</button>
+          <button type="submit" class="btn btn-primary">Add Staff</button>
           <button type="button" id="clearFormBtn" class="btn">Clear</button>
         </div>
       </form>
@@ -53,6 +61,7 @@
           <thead>
             <tr>
               <th>#</th>
+              <th>Category</th>
               <th>Chinese</th>
               <th>English</th>
               <th>Actions</th>
