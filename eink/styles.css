@@ -44,9 +44,11 @@ html,body{margin:0;padding:0;height:100%;font-family:Inter, -apple-system, Segoe
 .row-gap{display:flex;flex-direction:column;gap:14px}
 
 .grid.two{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.grid.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .field{display:flex;flex-direction:column;gap:8px}
 .field span{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.2px}
 input,select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);font-size:14px;background:var(--card);color:var(--text);transition:border-color .2s, box-shadow .2s}
+select{appearance:none;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");background-position:right 12px center;background-repeat:no-repeat;background-size:16px;padding-right:40px}
 input:focus,select:focus,button:focus{outline:none;border-color:color-mix(in oklab, var(--brand) 40%, white);box-shadow:0 0 0 4px color-mix(in oklab, var(--brand) 24%, transparent)}
 
 .btn{padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:linear-gradient(180deg,#fff,#f6f7fb);cursor:pointer;transition:transform .05s ease, box-shadow .2s;background-clip:padding-box}
