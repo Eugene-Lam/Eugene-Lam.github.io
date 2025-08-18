@@ -17,9 +17,11 @@ function seedDoctorsIfNeeded() {
   const existing = localStorage.getItem(STORAGE_KEYS.doctors);
   if (existing) return;
   const seed = [
-    { id: crypto.randomUUID(), chinese: '陳大文醫生', english: 'Dr Simon CHAN' },
-    { id: crypto.randomUUID(), chinese: '李小美醫生', english: 'Dr Emily LEE' },
-    { id: crypto.randomUUID(), chinese: '黃志強醫生', english: 'Dr Alex WONG' },
+    { id: crypto.randomUUID(), chinese: '陳大文醫生', english: 'Dr Simon CHAN', category: 'Doctor' },
+    { id: crypto.randomUUID(), chinese: '李小美醫生', english: 'Dr Emily LEE', category: 'Doctor' },
+    { id: crypto.randomUUID(), chinese: '黃志強醫生', english: 'Dr Alex WONG', category: 'Doctor' },
+    { id: crypto.randomUUID(), chinese: '王治療師', english: 'Therapist WONG', category: 'Staff' },
+    { id: crypto.randomUUID(), chinese: '李護士', english: 'Nurse LEE', category: 'Staff' },
   ];
   localStorage.setItem(STORAGE_KEYS.doctors, JSON.stringify(seed));
 }
@@ -34,14 +36,14 @@ function saveDoctors(doctors) {
   localStorage.setItem(STORAGE_KEYS.doctors, JSON.stringify(doctors));
 }
 
-function addDoctor(chinese, english) {
+function addDoctor(chinese, english, category) {
   const doctors = getDoctors();
-  doctors.push({ id: crypto.randomUUID(), chinese, english });
+  doctors.push({ id: crypto.randomUUID(), chinese, english, category });
   saveDoctors(doctors);
 }
 
-function updateDoctor(id, chinese, english) {
-  const doctors = getDoctors().map(d => d.id === id ? { ...d, chinese, english } : d);
+function updateDoctor(id, chinese, english, category) {
+  const doctors = getDoctors().map(d => d.id === id ? { ...d, chinese, english, category } : d);
   saveDoctors(doctors);
 }
 
@@ -131,13 +133,29 @@ function renderDashboard() {
     empty.value = '';
     empty.textContent = '—';
     select.appendChild(empty);
-    doctors.forEach(d => {
-      const opt = document.createElement('option');
-      opt.value = d.id;
-      opt.textContent = `${d.chinese} / ${d.english}`;
-      if (d.id === selectedId) opt.selected = true;
-      select.appendChild(opt);
+    
+    // Group by category
+    const grouped = doctors.reduce((acc, d) => {
+      const category = d.category || 'Doctor'; // Default to 'Doctor' if category is missing
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(d);
+      return acc;
+    }, {});
+    
+    // Add options grouped by category
+    Object.keys(grouped).sort().forEach(category => {
+      const optgroup = document.createElement('optgroup');
+      optgroup.label = category;
+             grouped[category].forEach(d => {
+         const opt = document.createElement('option');
+         opt.value = d.id;
+         opt.textContent = `${d.chinese} / ${d.english} (${category})`;
+         if (d.id === selectedId) opt.selected = true;
+         optgroup.appendChild(opt);
+       });
+      select.appendChild(optgroup);
     });
+    
     return select;
   };
 
@@ -246,7 +264,7 @@ function renderSettings() {
   body.innerHTML = '';
   doctors.forEach((d, i) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${i + 1}</td><td>${d.chinese}</td><td>${d.english}</td>`;
+    tr.innerHTML = `<td>${i + 1}</td><td>${d.category || 'Doctor'}</td><td>${d.chinese}</td><td>${d.english}</td>`;
     const tdAct = document.createElement('td');
     const btnEdit = document.createElement('button');
     btnEdit.className = 'btn';
@@ -256,14 +274,16 @@ function renderSettings() {
       if (chinese === null) return;
       const english = prompt('English name', d.english);
       if (english === null) return;
-      updateDoctor(d.id, chinese.trim(), english.trim());
+      const category = prompt('Category (Doctor/Therapist/Staff)', d.category || 'Doctor');
+      if (category === null) return;
+      updateDoctor(d.id, chinese.trim(), english.trim(), category.trim());
       renderSettings();
     });
     const btnDel = document.createElement('button');
     btnDel.className = 'btn';
     btnDel.textContent = 'Delete';
     btnDel.addEventListener('click', () => {
-      if (!confirm('Delete this doctor?')) return;
+      if (!confirm('Delete this staff member?')) return;
       deleteDoctor(d.id);
       renderSettings();
     });
@@ -275,20 +295,24 @@ function renderSettings() {
   const form = document.getElementById('doctorForm');
   const chineseInput = document.getElementById('doctorChinese');
   const englishInput = document.getElementById('doctorEnglish');
+  const categorySelect = document.getElementById('doctorCategory');
   const clearBtn = document.getElementById('clearFormBtn');
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     const c = chineseInput.value.trim();
     const eName = englishInput.value.trim();
+    const category = categorySelect.value;
     if (!c || !eName) return;
-    addDoctor(c, eName);
+    addDoctor(c, eName, category);
     chineseInput.value = '';
     englishInput.value = '';
+    categorySelect.value = 'Doctor';
     renderSettings();
   });
   clearBtn?.addEventListener('click', () => {
     chineseInput.value = '';
     englishInput.value = '';
+    categorySelect.value = 'Doctor';
     chineseInput.focus();
   });
 }
