@@ -72,6 +72,40 @@
       </div>
     </main>
 
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Edit Staff Member</h3>
+          <button id="closeModal" class="btn btn-ghost" style="padding: 4px 8px; font-size: 18px;">×</button>
+        </div>
+        <form id="editForm" class="modal-body">
+          <div class="grid three">
+            <label class="field">
+              <span>Chinese Name</span>
+              <input id="editChinese" type="text" required />
+            </label>
+            <label class="field">
+              <span>English Name</span>
+              <input id="editEnglish" type="text" required />
+            </label>
+            <label class="field">
+              <span>Category</span>
+              <select id="editCategory">
+                <option value="Doctor">Doctor</option>
+                <!-- <option value="Therapist">Therapist</option> -->
+                <option value="Staff">Staff</option>
+              </select>
+            </label>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <button type="button" id="cancelEdit" class="btn">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <footer class="footer">
       <span>HA • HHH — E‑ink Admin Prototype</span>
     </footer>

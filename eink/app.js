@@ -270,14 +270,7 @@ function renderSettings() {
     btnEdit.className = 'btn';
     btnEdit.textContent = 'Edit';
     btnEdit.addEventListener('click', () => {
-      const chinese = prompt('Chinese name', d.chinese);
-      if (chinese === null) return;
-      const english = prompt('English name', d.english);
-      if (english === null) return;
-      const category = prompt('Category (Doctor/Therapist/Staff)', d.category || 'Doctor');
-      if (category === null) return;
-      updateDoctor(d.id, chinese.trim(), english.trim(), category.trim());
-      renderSettings();
+      openEditModal(d);
     });
     const btnDel = document.createElement('button');
     btnDel.className = 'btn';
@@ -314,6 +307,53 @@ function renderSettings() {
     englishInput.value = '';
     categorySelect.value = 'Doctor';
     chineseInput.focus();
+  });
+
+  // Modal functionality
+  setupEditModal();
+}
+
+let currentEditId = null;
+
+function openEditModal(staff) {
+  currentEditId = staff.id;
+  document.getElementById('editChinese').value = staff.chinese;
+  document.getElementById('editEnglish').value = staff.english;
+  document.getElementById('editCategory').value = staff.category || 'Doctor';
+  document.getElementById('editModal').style.display = 'flex';
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').style.display = 'none';
+  currentEditId = null;
+}
+
+function setupEditModal() {
+  const modal = document.getElementById('editModal');
+  const closeBtn = document.getElementById('closeModal');
+  const cancelBtn = document.getElementById('cancelEdit');
+  const editForm = document.getElementById('editForm');
+
+  closeBtn?.addEventListener('click', closeEditModal);
+  cancelBtn?.addEventListener('click', closeEditModal);
+  
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeEditModal();
+  });
+
+  editForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!currentEditId) return;
+    
+    const chinese = document.getElementById('editChinese').value.trim();
+    const english = document.getElementById('editEnglish').value.trim();
+    const category = document.getElementById('editCategory').value;
+    
+    if (!chinese || !english) return;
+    
+    updateDoctor(currentEditId, chinese, english, category);
+    closeEditModal();
+    renderSettings();
   });
 }
 
