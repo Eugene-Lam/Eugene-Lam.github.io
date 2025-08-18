@@ -189,38 +189,32 @@ function renderDashboard() {
     tdDoc.appendChild(selDoc);
     tr.appendChild(tdDoc);
 
-    // Actions
+    // Actions (Active/Standby toggle)
     const tdAct = document.createElement('td');
-    const standbyTag = document.createElement('span');
-    const updateStandbyTag = () => {
-      standbyTag.className = 'standby';
-      standbyTag.style.display = 'inline-flex';
-      standbyTag.style.alignItems = 'center';
-      standbyTag.style.gap = '6px';
-      standbyTag.style.background = disp.standby ? '#111' : '#0b6a0b';
-      if (disp.standby) {
-        standbyTag.innerHTML = '<img src="assets/hhh_logo.svg" alt="Standby" style="height:14px;border-radius:3px" /> <span>Standby</span>';
-      } else {
-        standbyTag.textContent = 'Active';
-      }
-    };
-    updateStandbyTag();
+    const switchWrap = document.createElement('label');
+    switchWrap.className = 'switch';
+    const switchInput = document.createElement('input');
+    switchInput.type = 'checkbox';
+    switchInput.checked = !disp.standby; // checked = Active
+    switchInput.setAttribute('aria-label', 'Toggle Active / Standby');
+    const switchSlider = document.createElement('span');
+    switchSlider.className = 'slider';
+    const switchText = document.createElement('span');
+    switchText.className = 'switch-label';
+    switchText.textContent = switchInput.checked ? 'Active' : 'Standby';
 
-    const btnStandby = document.createElement('button');
-    btnStandby.className = 'btn';
-    btnStandby.textContent = disp.standby ? 'Wake' : 'Standby';
-    btnStandby.addEventListener('click', () => {
+    switchInput.addEventListener('change', () => {
       const displaysNow = getDisplays();
-      displaysNow[idx].standby = !displaysNow[idx].standby;
+      displaysNow[idx].standby = !switchInput.checked; // unchecked => Standby
       displaysNow[idx].lastUpdate = Date.now();
       saveDisplays(displaysNow);
       disp.standby = displaysNow[idx].standby;
-      btnStandby.textContent = disp.standby ? 'Wake' : 'Standby';
+      switchText.textContent = switchInput.checked ? 'Active' : 'Standby';
       tdTs.textContent = formatTime(displaysNow[idx].lastUpdate);
-      updateStandbyTag();
     });
 
-    tdAct.append(standbyTag, document.createTextNode(' '), btnStandby);
+    switchWrap.append(switchInput, switchSlider);
+    tdAct.append(switchWrap, document.createTextNode(' '), switchText);
     tr.appendChild(tdAct);
 
     tbody.appendChild(tr);
