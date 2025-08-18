@@ -62,7 +62,7 @@ function seedDisplaysIfNeeded() {
     battery: Math.floor(Math.random() * 51) + 50, // 50..100
     lastUpdate: now - Math.floor(Math.random() * 1000 * 60 * 60),
     doctorId: null,
-    standby: false,
+    standby: true, // Start in Standby mode
   }));
   localStorage.setItem(STORAGE_KEYS.displays, JSON.stringify(displays));
 }
@@ -202,6 +202,7 @@ function renderDashboard() {
     const switchText = document.createElement('span');
     switchText.className = 'switch-label';
     switchText.textContent = switchInput.checked ? 'Active' : 'Standby';
+    switchText.style.minWidth = '60px'; // Fixed width to prevent table layout shifts
 
     switchInput.addEventListener('change', () => {
       const displaysNow = getDisplays();
