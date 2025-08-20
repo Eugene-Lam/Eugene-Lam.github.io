@@ -86,6 +86,51 @@ The i18n system uses:
 
 ## Version History
 
-- **v1.7**: Added multi-language support (English & Chinese Hong Kong)
-- **v1.6**: Core functionality and UI improvements
-- Previous versions: Initial development
+### v1.7 (Current)
+- **Multi-language Support**: Added English and Chinese (Hong Kong) localization
+- **Language Switching**: Dynamic language switcher with localStorage persistence
+- **Internationalization**: Complete i18n system with data attributes
+- **Localized Content**: All UI elements translated and localized
+
+### v1.6
+- **Form Validation Improvements**: Added warning messages when both name fields are empty
+- **Enhanced User Experience**: Auto-hide warnings when user starts typing
+- **Better Feedback**: Clear visual indicators for form validation errors
+- **Modal Support**: Warning messages in both main form and edit modal
+
+### v1.5
+- **Flexible Name Fields**: Allow submission with either Chinese or English name filled
+- **Improved Validation**: Require at least one name field instead of both
+- **Better UX**: Removed required attributes, handled validation in JavaScript
+
+### v1.4
+- **Staff Categories System**: Added support for Doctor, Therapist, and Staff categories
+- **Grouped Dropdown**: Dashboard dropdown shows staff organized by category
+- **Web-based Edit Modal**: Replaced browser prompts with professional modal dialog
+- **Version Management**: Automatic localStorage reset when app version changes
+- **Improved UI**: 3-column form layout and enhanced dropdown styling
+- **Cache-busting**: Version management to ensure latest features load properly
+- **Updated Seed Data**: New staff members with proper category assignments
+
+### v1.3
+- **Demo Credentials**: Pre-filled login form with admin/demo123 for easier testing
+- **Login Button Spacing**: Fixed gap between password field and login button
+- **Cache-busting**: Version management to prevent UI update issues
+
+### v1.2
+- **Initial Standby State**: All displays start in Standby mode by default
+- **Table Width Stability**: Fixed layout shifts when toggling Active/Standby
+- **Cache-busting**: Version management for consistent updates
+
+### v1.1
+- **Active/Standby Toggle**: Replaced Wake button with modern toggle switch
+- **Removed HHH Logo**: Cleaner standby state display
+- **Cache-busting**: Version management to prevent caching issues
+
+### v1.0
+- **Core Functionality**: Initial implementation of E-ink admin system
+- **Staff Management**: Add, edit, delete staff members
+- **Display Monitoring**: Real-time status tracking
+- **Dashboard Interface**: Status indicators and controls
+- **Settings Page**: Staff directory management
+- **Basic Authentication**: Login system with demo credentials
