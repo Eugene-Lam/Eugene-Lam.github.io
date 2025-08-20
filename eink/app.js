@@ -1,5 +1,5 @@
 // Simple in-browser state for prototype purpose only
-const APP_VERSION = '1.4';
+const APP_VERSION = '1.5';
 const STORAGE_KEYS = {
   version: 'eink.version',
   loggedIn: 'eink.loggedIn',
@@ -308,7 +308,7 @@ function renderSettings() {
     const c = chineseInput.value.trim();
     const eName = englishInput.value.trim();
     const category = categorySelect.value;
-    if (!c || !eName) return;
+    if (!c && !eName) return; // Require at least one name field to be filled
     addDoctor(c, eName, category);
     chineseInput.value = '';
     englishInput.value = '';
@@ -362,7 +362,7 @@ function setupEditModal() {
     const english = document.getElementById('editEnglish').value.trim();
     const category = document.getElementById('editCategory').value;
     
-    if (!chinese || !english) return;
+    if (!chinese && !english) return; // Require at least one name field to be filled
     
     updateDoctor(currentEditId, chinese, english, category);
     closeEditModal();
