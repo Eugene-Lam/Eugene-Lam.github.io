@@ -35,6 +35,11 @@ html,body{margin:0;padding:0;height:100%;font-family:Inter, -apple-system, Segoe
 .nav-right{display:flex;gap:12px;align-items:center;justify-self:end}
 .logo{height:44px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
 
+/* Language switcher */
+.language-switcher{display:flex;gap:4px;align-items:center}
+.language-switcher .btn{min-width:40px;padding:6px 8px;font-size:12px;font-weight:600}
+.language-switcher .btn:disabled{opacity:0.6;cursor:not-allowed}
+
 .container{max-width:1100px;margin:28px auto;padding:0 18px}
 .narrow{max-width:520px}
 .page-title{margin:0 0 14px 0;letter-spacing:.2px}
