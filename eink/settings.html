@@ -7,8 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>E‑ink Admin • Settings</title>
-    <link rel="stylesheet" href="styles.css?v=1.6" />
-    <script defer src="app.js?v=1.6"></script>
+    <link rel="stylesheet" href="styles.css?v=1.7" />
+    <script defer src="i18n.js?v=1.7"></script>
+    <script defer src="app.js?v=1.7"></script>
   </head>
   <body data-page="settings">
     <header class="navbar">
@@ -17,45 +18,46 @@
           <img src="assets/ha_logo.jpg" alt="HA Logo" class="logo" />
           <img src="assets/hhh_logo.jpg" alt="HHH Logo" class="logo" />
         </div>
-        <h1 class="brand">專科門診 SOPD</h1>
+        <h1 class="brand" data-i18n="brand">專科門診 SOPD</h1>
       </div>
       <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="dashboard.html">Dashboard</a>
-        <a class="active" href="settings.html">Settings</a>
+        <a href="index.html" data-i18n="home">Home</a>
+        <a href="dashboard.html" data-i18n="dashboard">Dashboard</a>
+        <a class="active" href="settings.html" data-i18n="settings">Settings</a>
       </nav>
       <div class="nav-right">
-        <button id="logoutBtn" class="btn btn-ghost">Logout</button>
+        <div id="languageSwitcher"></div>
+        <button id="logoutBtn" class="btn btn-ghost" data-i18n="logout">Logout</button>
       </div>
     </header>
 
     <main class="container">
-      <h2 class="page-title">Staff Directory</h2>
+      <h2 class="page-title" data-i18n="staffDirectory">Staff Directory</h2>
       <form id="doctorForm" class="card row-gap">
         <div class="grid three">
           <label class="field">
-            <span>Chinese Name</span>
-            <input id="doctorChinese" type="text" placeholder="e.g. 陳大文醫生" />
+            <span data-i18n="chineseName">Chinese Name</span>
+            <input id="doctorChinese" type="text" data-i18n-placeholder="chineseNamePlaceholder" placeholder="e.g. 陳大文醫生" />
           </label>
           <label class="field">
-            <span>English Name</span>
-            <input id="doctorEnglish" type="text" placeholder="e.g. Dr Simon CHAN" />
+            <span data-i18n="englishName">English Name</span>
+            <input id="doctorEnglish" type="text" data-i18n-placeholder="englishNamePlaceholder" placeholder="e.g. Dr Simon CHAN" />
           </label>
           <label class="field">
-            <span>Category</span>
+            <span data-i18n="category">Category</span>
             <select id="doctorCategory">
-              <option value="Doctor">Doctor</option>
+              <option value="Doctor" data-i18n="doctor">Doctor</option>
               <!-- <option value="Therapist">Therapist</option> -->
-              <option value="Staff">Staff</option>
+              <option value="Staff" data-i18n="staff">Staff</option>
             </select>
           </label>
         </div>
         <div class="actions">
-          <button type="submit" class="btn btn-primary">Add Staff</button>
-          <button type="button" id="clearFormBtn" class="btn">Clear</button>
+          <button type="submit" class="btn btn-primary" data-i18n="addStaff">Add Staff</button>
+          <button type="button" id="clearFormBtn" class="btn" data-i18n="clear">Clear</button>
         </div>
         <div id="formWarning" class="warning" style="display: none;">
-          <span>⚠️ Please fill in at least one name field (Chinese or English)</span>
+          <span data-i18n="fillOneNameField">⚠️ Please fill in at least one name field (Chinese or English)</span>
         </div>
       </form>
 
@@ -63,11 +65,11 @@
         <table class="table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Category</th>
-              <th>Chinese</th>
-              <th>English</th>
-              <th>Actions</th>
+              <th data-i18n="number">#</th>
+              <th data-i18n="category">Category</th>
+              <th data-i18n="chinese">Chinese</th>
+              <th data-i18n="english">English</th>
+              <th data-i18n="actions">Actions</th>
             </tr>
           </thead>
           <tbody id="doctorsBody"></tbody>
@@ -79,41 +81,41 @@
     <div id="editModal" class="modal" style="display: none;">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>Edit Staff Member</h3>
+          <h3 data-i18n="editStaffMember">Edit Staff Member</h3>
           <button id="closeModal" class="btn btn-ghost" style="padding: 4px 8px; font-size: 18px;">×</button>
         </div>
         <form id="editForm" class="modal-body">
           <div class="grid three">
             <label class="field">
-              <span>Chinese Name</span>
+              <span data-i18n="chineseName">Chinese Name</span>
               <input id="editChinese" type="text" />
             </label>
             <label class="field">
-              <span>English Name</span>
+              <span data-i18n="englishName">English Name</span>
               <input id="editEnglish" type="text" />
             </label>
             <label class="field">
-              <span>Category</span>
+              <span data-i18n="category">Category</span>
               <select id="editCategory">
-                <option value="Doctor">Doctor</option>
+                <option value="Doctor" data-i18n="doctor">Doctor</option>
                 <!-- <option value="Therapist">Therapist</option> -->
-                <option value="Staff">Staff</option>
+                <option value="Staff" data-i18n="staff">Staff</option>
               </select>
             </label>
           </div>
           <div class="modal-actions">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <button type="button" id="cancelEdit" class="btn">Cancel</button>
+            <button type="submit" class="btn btn-primary" data-i18n="saveChanges">Save Changes</button>
+            <button type="button" id="cancelEdit" class="btn" data-i18n="cancel">Cancel</button>
           </div>
           <div id="editFormWarning" class="warning" style="display: none;">
-            <span>⚠️ Please fill in at least one name field (Chinese or English)</span>
+            <span data-i18n="fillOneNameField">⚠️ Please fill in at least one name field (Chinese or English)</span>
           </div>
         </form>
       </div>
     </div>
 
     <footer class="footer">
-      <span>HA • HHH — E‑ink Admin Prototype</span>
+      <span data-i18n="footer">HA • HHH — E‑ink Admin Prototype</span>
     </footer>
   </body>
   </html>
