@@ -303,12 +303,23 @@ function renderSettings() {
   const englishInput = document.getElementById('doctorEnglish');
   const categorySelect = document.getElementById('doctorCategory');
   const clearBtn = document.getElementById('clearFormBtn');
+  const formWarning = document.getElementById('formWarning');
+  
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     const c = chineseInput.value.trim();
     const eName = englishInput.value.trim();
     const category = categorySelect.value;
-    if (!c && !eName) return; // Require at least one name field to be filled
+    
+    if (!c && !eName) {
+      // Show warning when both fields are empty
+      formWarning.style.display = 'block';
+      return;
+    }
+    
+    // Hide warning if it was showing
+    formWarning.style.display = 'none';
+    
     addDoctor(c, eName, category);
     chineseInput.value = '';
     englishInput.value = '';
@@ -319,7 +330,25 @@ function renderSettings() {
     chineseInput.value = '';
     englishInput.value = '';
     categorySelect.value = 'Doctor';
+    formWarning.style.display = 'none'; // Hide warning when clearing
     chineseInput.focus();
+  });
+  
+  // Hide warning when user starts typing in either field
+  chineseInput?.addEventListener('input', () => {
+    const c = chineseInput.value.trim();
+    const eName = englishInput.value.trim();
+    if (c || eName) {
+      formWarning.style.display = 'none';
+    }
+  });
+  
+  englishInput?.addEventListener('input', () => {
+    const c = chineseInput.value.trim();
+    const eName = englishInput.value.trim();
+    if (c || eName) {
+      formWarning.style.display = 'none';
+    }
   });
 
   // Modal functionality
@@ -346,6 +375,9 @@ function setupEditModal() {
   const closeBtn = document.getElementById('closeModal');
   const cancelBtn = document.getElementById('cancelEdit');
   const editForm = document.getElementById('editForm');
+  const editChineseInput = document.getElementById('editChinese');
+  const editEnglishInput = document.getElementById('editEnglish');
+  const editFormWarning = document.getElementById('editFormWarning');
 
   closeBtn?.addEventListener('click', closeEditModal);
   cancelBtn?.addEventListener('click', closeEditModal);
@@ -358,15 +390,39 @@ function setupEditModal() {
     e.preventDefault();
     if (!currentEditId) return;
     
-    const chinese = document.getElementById('editChinese').value.trim();
-    const english = document.getElementById('editEnglish').value.trim();
+    const chinese = editChineseInput.value.trim();
+    const english = editEnglishInput.value.trim();
     const category = document.getElementById('editCategory').value;
     
-    if (!chinese && !english) return; // Require at least one name field to be filled
+    if (!chinese && !english) {
+      // Show warning when both fields are empty
+      editFormWarning.style.display = 'block';
+      return;
+    }
+    
+    // Hide warning if it was showing
+    editFormWarning.style.display = 'none';
     
     updateDoctor(currentEditId, chinese, english, category);
     closeEditModal();
     renderSettings();
+  });
+  
+  // Hide warning when user starts typing in either field
+  editChineseInput?.addEventListener('input', () => {
+    const chinese = editChineseInput.value.trim();
+    const english = editEnglishInput.value.trim();
+    if (chinese || english) {
+      editFormWarning.style.display = 'none';
+    }
+  });
+  
+  editEnglishInput?.addEventListener('input', () => {
+    const chinese = editChineseInput.value.trim();
+    const english = editEnglishInput.value.trim();
+    if (chinese || english) {
+      editFormWarning.style.display = 'none';
+    }
   });
 }
 
