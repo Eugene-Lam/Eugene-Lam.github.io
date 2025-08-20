@@ -83,19 +83,6 @@ The i18n system uses:
 - LocalStorage for data persistence
 - Responsive CSS Grid and Flexbox layout
 
-## Development
-
-To run the application locally:
-
-```bash
-# Start a local server
-python3 -m http.server 8000
-
-# Or use any other local server
-npx serve .
-```
-
-Then open `http://localhost:8000` in your browser.
 
 ## Version History
 
