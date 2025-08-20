@@ -1,10 +1,11 @@
 // Simple in-browser state for prototype purpose only
-const APP_VERSION = '1.6';
+const APP_VERSION = '1.7';
 const STORAGE_KEYS = {
   version: 'eink.version',
   loggedIn: 'eink.loggedIn',
   doctors: 'eink.doctors',
   displays: 'eink.displays',
+  language: 'eink.language',
 };
 
 function checkVersion() {
@@ -158,11 +159,11 @@ function renderDashboard() {
     // Add options grouped by category
     Object.keys(grouped).sort().forEach(category => {
       const optgroup = document.createElement('optgroup');
-      optgroup.label = category;
+      optgroup.label = category === 'Doctor' ? I18N.getText('doctor') : I18N.getText('staff');
              grouped[category].forEach(d => {
          const opt = document.createElement('option');
          opt.value = d.id;
-         opt.textContent = `${d.chinese} / ${d.english} (${category})`;
+         opt.textContent = `${d.chinese} / ${d.english} (${category === 'Doctor' ? I18N.getText('doctor') : I18N.getText('staff')})`;
          if (d.id === selectedId) opt.selected = true;
          optgroup.appendChild(opt);
        });
@@ -190,7 +191,7 @@ function renderDashboard() {
     const dot = document.createElement('span');
     dot.className = 'dot ' + (disp.online ? 'online' : 'offline');
     const label = document.createElement('span');
-    label.textContent = disp.online ? 'Online' : 'Offline';
+    label.textContent = disp.online ? I18N.getText('onlineStatus') : I18N.getText('offlineStatus');
     label.style.color = disp.online ? 'inherit' : 'var(--danger)';
     const wrap = document.createElement('div');
     wrap.className = 'status';
@@ -227,12 +228,12 @@ function renderDashboard() {
     const switchInput = document.createElement('input');
     switchInput.type = 'checkbox';
     switchInput.checked = !disp.standby; // checked = Active
-    switchInput.setAttribute('aria-label', 'Toggle Active / Standby');
+    switchInput.setAttribute('aria-label', I18N.getText('toggleActiveStandby'));
     const switchSlider = document.createElement('span');
     switchSlider.className = 'slider';
     const switchText = document.createElement('span');
     switchText.className = 'switch-label';
-    switchText.textContent = switchInput.checked ? 'Active' : 'Standby';
+    switchText.textContent = switchInput.checked ? I18N.getText('active') : I18N.getText('standby');
     switchText.style.minWidth = '60px'; // Fixed width to prevent table layout shifts
 
     switchInput.addEventListener('change', () => {
@@ -241,7 +242,7 @@ function renderDashboard() {
       displaysNow[idx].lastUpdate = Date.now();
       saveDisplays(displaysNow);
       disp.standby = displaysNow[idx].standby;
-      switchText.textContent = switchInput.checked ? 'Active' : 'Standby';
+      switchText.textContent = switchInput.checked ? I18N.getText('active') : I18N.getText('standby');
       tdTs.textContent = formatTime(displaysNow[idx].lastUpdate);
     });
 
@@ -268,6 +269,11 @@ function renderDashboard() {
     setAllStandby(true);
     renderDashboard();
   });
+  
+  // Re-render when language changes
+  document.addEventListener('languageChanged', () => {
+    renderDashboard();
+  });
 }
 
 function renderSettings() {
@@ -277,19 +283,20 @@ function renderSettings() {
   body.innerHTML = '';
   doctors.forEach((d, i) => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${i + 1}</td><td>${d.category || 'Doctor'}</td><td>${d.chinese}</td><td>${d.english}</td>`;
+    const categoryText = d.category === 'Doctor' ? I18N.getText('doctor') : I18N.getText('staff');
+    tr.innerHTML = `<td>${i + 1}</td><td>${categoryText}</td><td>${d.chinese}</td><td>${d.english}</td>`;
     const tdAct = document.createElement('td');
     const btnEdit = document.createElement('button');
     btnEdit.className = 'btn';
-    btnEdit.textContent = 'Edit';
+    btnEdit.textContent = I18N.getText('edit');
     btnEdit.addEventListener('click', () => {
       openEditModal(d);
     });
     const btnDel = document.createElement('button');
     btnDel.className = 'btn';
-    btnDel.textContent = 'Delete';
+    btnDel.textContent = I18N.getText('delete');
     btnDel.addEventListener('click', () => {
-      if (!confirm('Delete this staff member?')) return;
+      if (!confirm(I18N.getText('deleteStaffConfirm'))) return;
       deleteDoctor(d.id);
       renderSettings();
     });
@@ -353,6 +360,11 @@ function renderSettings() {
 
   // Modal functionality
   setupEditModal();
+  
+  // Re-render when language changes
+  document.addEventListener('languageChanged', () => {
+    renderSettings();
+  });
 }
 
 let currentEditId = null;
@@ -452,6 +464,15 @@ function renderHome() {
 
 // Router per page
 document.addEventListener('DOMContentLoaded', () => {
+  // Initialize internationalization
+  I18N.initializeLanguage();
+  
+  // Add language switcher to all pages
+  const languageSwitcherContainer = document.getElementById('languageSwitcher');
+  if (languageSwitcherContainer) {
+    languageSwitcherContainer.appendChild(I18N.createLanguageSwitcher());
+  }
+  
   // Check version and reset data if needed
   const wasReset = checkVersion();
   
