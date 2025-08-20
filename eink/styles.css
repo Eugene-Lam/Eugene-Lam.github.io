@@ -66,11 +66,27 @@ input:focus,select:focus,button:focus{outline:none;border-color:color-mix(in okl
 .btn-ghost:hover{background:rgba(255,255,255,.12)}
 
 .table-wrap{overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow)}
-table.table{width:100%;border-collapse:separate;border-spacing:0}
+table.table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
 table.table thead th{position:sticky;top:0;background:linear-gradient(180deg, color-mix(in oklab, var(--card) 80%, white), var(--card));border-bottom:1px solid var(--border);text-align:left;padding:12px 12px;font-weight:600}
 table.table tbody tr:nth-child(even){background:color-mix(in oklab, var(--card) 95%, #000)}
 table.table tbody tr:hover{background:color-mix(in oklab, var(--card) 92%, #000)}
 table.table tbody td{border-top:1px solid var(--border);padding:12px;vertical-align:middle}
+
+/* Fixed column widths for settings table */
+table.table.settings-table th:nth-child(1), table.table.settings-table td:nth-child(1){width:60px} /* # */
+table.table.settings-table th:nth-child(2), table.table.settings-table td:nth-child(2){width:120px} /* Category */
+table.table.settings-table th:nth-child(3), table.table.settings-table td:nth-child(3){width:200px} /* Chinese */
+table.table.settings-table th:nth-child(4), table.table.settings-table td:nth-child(4){width:200px} /* English */
+table.table.settings-table th:nth-child(5), table.table.settings-table td:nth-child(5){width:150px} /* Actions */
+
+/* Fixed column widths for dashboard table */
+table.table.dashboard-table th:nth-child(1), table.table.dashboard-table td:nth-child(1){width:100px} /* Room */
+table.table.dashboard-table th:nth-child(2), table.table.dashboard-table td:nth-child(2){width:80px} /* Signal */
+table.table.dashboard-table th:nth-child(3), table.table.dashboard-table td:nth-child(3){width:100px} /* Online */
+table.table.dashboard-table th:nth-child(4), table.table.dashboard-table td:nth-child(4){width:80px} /* Battery */
+table.table.dashboard-table th:nth-child(5), table.table.dashboard-table td:nth-child(5){width:150px} /* Last Update */
+table.table.dashboard-table th:nth-child(6), table.table.dashboard-table td:nth-child(6){width:200px} /* Staff */
+table.table.dashboard-table th:nth-child(7), table.table.dashboard-table td:nth-child(7){width:150px} /* Actions */
 
 .status{display:flex;align-items:center;gap:8px}
 .dot{width:10px;height:10px;border-radius:50%}
