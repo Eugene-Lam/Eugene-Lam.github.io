@@ -147,6 +147,8 @@ const TRANSLATIONS = {
 
 // Language management
 let currentLanguage = 'en';
+let updateTimeout = null;
+let cachedElements = null;
 
 // Main I18N object with all functions
 const I18N = {
@@ -157,22 +159,32 @@ const I18N = {
 
   // Set language
   setLanguage(lang) {
-    if (TRANSLATIONS[lang]) {
+    if (TRANSLATIONS[lang] && lang !== currentLanguage) {
       currentLanguage = lang;
       localStorage.setItem('eink.language', lang);
       document.documentElement.lang = lang;
-      this.updatePageLanguage();
       
-      // Update language switcher button states
-      const switcher = document.querySelector('.language-switcher');
-      if (switcher) {
-        switcher.querySelectorAll('button').forEach(btn => {
-          btn.disabled = btn.dataset.lang === currentLanguage;
-        });
+      // Clear cached elements when language changes
+      cachedElements = null;
+      
+      // Debounce the update to prevent excessive DOM manipulation
+      if (updateTimeout) {
+        clearTimeout(updateTimeout);
       }
-      
-      // Dispatch language changed event
-      document.dispatchEvent(new CustomEvent('languageChanged'));
+      updateTimeout = setTimeout(() => {
+        this.updatePageLanguage();
+        
+        // Update language switcher button states
+        const switcher = document.querySelector('.language-switcher');
+        if (switcher) {
+          switcher.querySelectorAll('button').forEach(btn => {
+            btn.disabled = btn.dataset.lang === currentLanguage;
+          });
+        }
+        
+        // Dispatch language changed event
+        document.dispatchEvent(new CustomEvent('languageChanged'));
+      }, 50); // 50ms debounce
     }
   },
 
@@ -183,8 +195,18 @@ const I18N = {
 
   // Update page language
   updatePageLanguage() {
+    // Cache DOM elements to avoid repeated queries
+    if (!cachedElements) {
+      cachedElements = {
+        i18n: document.querySelectorAll('[data-i18n]'),
+        placeholder: document.querySelectorAll('[data-i18n-placeholder]'),
+        title: document.querySelectorAll('[data-i18n-title]'),
+        ariaLabel: document.querySelectorAll('[data-i18n-aria-label]')
+      };
+    }
+    
     // Update all elements with data-i18n attribute
-    document.querySelectorAll('[data-i18n]').forEach(element => {
+    cachedElements.i18n.forEach(element => {
       const key = element.getAttribute('data-i18n');
       const text = this.getText(key);
       
@@ -196,19 +218,19 @@ const I18N = {
     });
     
     // Update placeholder attributes
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+    cachedElements.placeholder.forEach(element => {
       const key = element.getAttribute('data-i18n-placeholder');
       element.placeholder = this.getText(key);
     });
     
     // Update title attributes
-    document.querySelectorAll('[data-i18n-title]').forEach(element => {
+    cachedElements.title.forEach(element => {
       const key = element.getAttribute('data-i18n-title');
       element.title = this.getText(key);
     });
     
     // Update aria-label attributes
-    document.querySelectorAll('[data-i18n-aria-label]').forEach(element => {
+    cachedElements.ariaLabel.forEach(element => {
       const key = element.getAttribute('data-i18n-aria-label');
       element.setAttribute('aria-label', this.getText(key));
     });
@@ -239,11 +261,20 @@ const I18N = {
     
     switcher.addEventListener('click', (e) => {
       if (e.target.tagName === 'BUTTON' && e.target.dataset.lang) {
-        this.setLanguage(e.target.dataset.lang);
-        // Update button states
-        switcher.querySelectorAll('button').forEach(btn => {
-          btn.disabled = btn.dataset.lang === currentLanguage;
-        });
+        const targetLang = e.target.dataset.lang;
+        
+        // Prevent rapid clicking by disabling buttons temporarily
+        const buttons = switcher.querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = true);
+        
+        this.setLanguage(targetLang);
+        
+        // Re-enable buttons after a short delay
+        setTimeout(() => {
+          buttons.forEach(btn => {
+            btn.disabled = btn.dataset.lang === currentLanguage;
+          });
+        }, 100);
       }
     });
     
