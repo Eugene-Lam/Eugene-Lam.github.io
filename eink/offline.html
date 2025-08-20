@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0066cc" />
+    <title>E‑ink Admin • Offline</title>
+    <link rel="stylesheet" href="styles.css?v=1.8" />
+    <style>
+        .offline-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .offline-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+        
+        .offline-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        
+        .offline-message {
+            color: var(--muted);
+            margin-bottom: 24px;
+            max-width: 400px;
+        }
+        
+        .retry-btn {
+            background: var(--brand);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .retry-btn:hover {
+            filter: brightness(0.95);
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-left">
+            <div class="logos">
+                <img src="assets/ha_logo.jpg" alt="HA Logo" class="logo" />
+                <img src="assets/hhh_logo.jpg" alt="HHH Logo" class="logo" />
+            </div>
+            <h1 class="brand">專科門診 SOPD</h1>
+        </div>
+        <div class="nav-right">
+            <span style="color: #fff; font-size: 14px;">Offline Mode</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="offline-container">
+            <div class="offline-icon">📡</div>
+            <h2 class="offline-title">No Internet Connection</h2>
+            <p class="offline-message">
+                You're currently offline. Some features may not be available. 
+                Please check your internet connection and try again.
+            </p>
+            <button class="retry-btn" onclick="window.location.reload()">
+                Retry Connection
+            </button>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <span>HA • HHH — E‑ink Admin Prototype</span>
+    </footer>
+
+    <script>
+        // Check if we're back online
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+        
+        // Show online status
+        if (navigator.onLine) {
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
