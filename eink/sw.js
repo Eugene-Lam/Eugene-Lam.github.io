@@ -1,22 +1,22 @@
-const CACHE_NAME = 'eink-admin-v1.8';
+const CACHE_NAME = 'eink-admin-v1.8.1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/dashboard.html',
-  '/settings.html',
-  '/offline.html',
-  '/styles.css',
-  '/app.js',
-  '/i18n.js',
-  '/pwa.js',
-  '/assets/ha_logo.jpg',
-  '/assets/hhh_logo.jpg',
-  '/assets/ha_logo.svg',
-  '/assets/hhh_logo.svg',
-  '/assets/icon-16.png',
-  '/assets/icon-32.png',
-  '/assets/icon-192.png',
-  '/assets/icon-512.png'
+  '/eink/',
+  '/eink/index.html',
+  '/eink/dashboard.html',
+  '/eink/settings.html',
+  '/eink/offline.html',
+  '/eink/styles.css',
+  '/eink/app.js',
+  '/eink/i18n.js',
+  '/eink/pwa.js',
+  '/eink/assets/ha_logo.jpg',
+  '/eink/assets/hhh_logo.jpg',
+  '/eink/assets/ha_logo.svg',
+  '/eink/assets/hhh_logo.svg',
+  '/eink/assets/icon-16.png',
+  '/eink/assets/icon-32.png',
+  '/eink/assets/icon-192.png',
+  '/eink/assets/icon-512.png'
 ];
 
 // Install event - cache resources
@@ -41,7 +41,7 @@ self.addEventListener('fetch', event => {
               .catch(() => {
           // If both cache and network fail, show offline page
           if (event.request.destination === 'document') {
-            return caches.match('/offline.html');
+            return caches.match('/eink/offline.html');
           }
         })
   );
