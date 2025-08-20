@@ -4,11 +4,14 @@ A web-based administration interface for managing E-ink displays in a hospital e
 
 ## Features
 
+- **Progressive Web App (PWA)**: Installable on desktop and mobile devices
+- **Offline Support**: Works without internet connection
 - **Multi-language Support**: English and Chinese (Hong Kong) localization
 - **Dashboard**: Real-time monitoring of E-ink displays with status indicators
 - **Staff Management**: Add, edit, and delete staff members with bilingual names
 - **Display Control**: Toggle displays between Active and Standby modes
 - **Responsive Design**: Works on desktop and mobile devices
+- **App-like Experience**: Full-screen mode without browser UI
 
 ## Multi-Language Support
 
@@ -65,8 +68,12 @@ eink/
 ├── index.html      # Login page
 ├── dashboard.html  # Dashboard page
 ├── settings.html   # Settings page
+├── offline.html    # Offline page
+├── manifest.json   # PWA manifest
+├── sw.js           # Service worker
+├── pwa.js          # PWA management
 ├── test.html       # Language test page
-└── assets/         # Images and logos
+└── assets/         # Images, logos, and icons
 ```
 
 ### Internationalization System
@@ -82,11 +89,47 @@ The i18n system uses:
 - Modern browsers with ES6+ support
 - LocalStorage for data persistence
 - Responsive CSS Grid and Flexbox layout
+- PWA support (Chrome 67+, Firefox 67+, Safari 11.1+, Edge 79+)
+
+## Progressive Web App (PWA)
+
+This application is a Progressive Web App that can be installed on desktop and mobile devices.
+
+### Installation
+
+- **Desktop**: Look for the install button in your browser's address bar
+- **Android**: Use "Add to Home screen" in Chrome
+- **iOS**: Use "Add to Home Screen" in Safari
+
+### PWA Features
+
+- **Offline Functionality**: Works without internet connection
+- **App-like Experience**: Full-screen mode without browser UI
+- **Automatic Updates**: Notifies when new versions are available
+- **Install Prompts**: Easy installation on supported devices
+
+### Offline Usage
+
+Once installed, the app will:
+- Cache essential files for offline use
+- Store data locally
+- Sync when connection is restored
+- Show offline indicators when disconnected
+
+For detailed PWA documentation, see [PWA-README.md](PWA-README.md).
 
 
 ## Version History
 
-### v1.7 (Current)
+### v1.8 (Current)
+- **Progressive Web App (PWA)**: Complete PWA implementation with installability
+- **Offline Support**: Service worker for offline functionality and caching
+- **App Installation**: Install prompts and app-like experience
+- **Offline Page**: Dedicated offline page with reconnection handling
+- **PWA Management**: Automatic updates and online/offline status monitoring
+- **Enhanced Icons**: Multiple icon sizes for different devices and platforms
+
+### v1.7
 - **Multi-language Support**: Added English and Chinese (Hong Kong) localization
 - **Language Switching**: Dynamic language switcher with localStorage persistence
 - **Internationalization**: Complete i18n system with data attributes
