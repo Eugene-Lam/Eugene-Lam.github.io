@@ -7,8 +7,9 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>E‑ink Admin • Dashboard</title>
-    <link rel="stylesheet" href="styles.css?v=1.6" />
-    <script defer src="app.js?v=1.6"></script>
+    <link rel="stylesheet" href="styles.css?v=1.7" />
+    <script defer src="i18n.js?v=1.7"></script>
+    <script defer src="app.js?v=1.7"></script>
   </head>
   <body data-page="dashboard">
     <header class="navbar">
@@ -17,36 +18,37 @@
           <img src="assets/ha_logo.jpg" alt="HA Logo" class="logo" />
           <img src="assets/hhh_logo.jpg" alt="HHH Logo" class="logo" />
         </div>
-        <h1 class="brand">專科門診 SOPD</h1>
+        <h1 class="brand" data-i18n="brand">專科門診 SOPD</h1>
       </div>
       <nav class="nav-links">
-        <a href="index.html">Home</a>
-        <a class="active" href="dashboard.html">Dashboard</a>
-        <a href="settings.html">Settings</a>
+        <a href="index.html" data-i18n="home">Home</a>
+        <a class="active" href="dashboard.html" data-i18n="dashboard">Dashboard</a>
+        <a href="settings.html" data-i18n="settings">Settings</a>
       </nav>
       <div class="nav-right">
-        <button id="logoutBtn" class="btn btn-ghost">Logout</button>
+        <div id="languageSwitcher"></div>
+        <button id="logoutBtn" class="btn btn-ghost" data-i18n="logout">Logout</button>
       </div>
     </header>
 
     <main class="container">
-      <h2 class="page-title">E‑ink Displays</h2>
+      <h2 class="page-title" data-i18n="einkDisplays">E‑ink Displays</h2>
       <div class="controls-row">
-        <button id="refreshStatusBtn" class="btn">Refresh Status</button>
-        <button id="setAllStandbyBtn" class="btn">Set ALL to Standby</button>
+        <button id="refreshStatusBtn" class="btn" data-i18n="refreshStatus">Refresh Status</button>
+        <button id="setAllStandbyBtn" class="btn" data-i18n="setAllStandby">Set ALL to Standby</button>
       </div>
 
       <div class="table-wrap">
         <table class="table">
           <thead>
             <tr>
-              <th>Room</th>
-              <th>Signal</th>
-              <th>Online</th>
-              <th>Battery</th>
-              <th>Last Update</th>
-              <th>Staff</th>
-              <th>Actions</th>
+              <th data-i18n="room">Room</th>
+              <th data-i18n="signal">Signal</th>
+              <th data-i18n="online">Online</th>
+              <th data-i18n="battery">Battery</th>
+              <th data-i18n="lastUpdate">Last Update</th>
+              <th data-i18n="staff">Staff</th>
+              <th data-i18n="actions">Actions</th>
             </tr>
           </thead>
           <tbody id="displaysBody"></tbody>
@@ -55,7 +57,7 @@
     </main>
 
     <footer class="footer">
-      <span>HA • HHH — E‑ink Admin Prototype</span>
+      <span data-i18n="footer">HA • HHH — E‑ink Admin Prototype</span>
     </footer>
   </body>
   </html>
