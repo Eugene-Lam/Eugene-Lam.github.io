@@ -1,5 +1,5 @@
 // Simple in-browser state for prototype purpose only
-const APP_VERSION = '1.5';
+const APP_VERSION = '1.6';
 const STORAGE_KEYS = {
   version: 'eink.version',
   loggedIn: 'eink.loggedIn',
