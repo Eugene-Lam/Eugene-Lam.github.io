@@ -25,9 +25,6 @@ The application supports two languages:
 - Use the language switcher in the top-right corner of any page
 - Language preference is saved in localStorage
 - Automatically detects browser language preference on first visit
-- **No Content Flash**: Language is set before page content loads
-- **Smooth Transitions**: Content fades in smoothly after translations are applied
-- **Performance Optimized**: Debounced updates prevent browser lag during rapid switching
 
 ### Localized Content
 
@@ -86,12 +83,9 @@ The i18n system uses:
 - `data-i18n-placeholder` for input placeholders
 - `I18N.getText(key)` for dynamic content
 - Event-driven updates when language changes
-- **Performance Optimizations**:
-  - DOM element caching to reduce queries by 75%
-  - Debounced updates (50ms) to prevent excessive DOM manipulation
-  - Immediate language initialization to prevent content flash
-  - Click protection to prevent rapid language switching
-  - Smooth fade-in transitions for better user experience
+- **Performance Optimizations**: DOM element caching and debounced updates
+- **Flash Prevention**: Immediate language initialization with content loading states
+- **Smooth UX**: Opacity transitions and rapid click protection
 
 ### Browser Compatibility
 
@@ -131,12 +125,16 @@ For detailed PWA documentation, see [PWA-README.md](PWA-README.md).
 ## Version History
 
 ### v1.8 (Current)
-- **Performance Optimizations**: Optimized language switching with debouncing and DOM caching
-- **Language Flash Fix**: Prevented English text flash when switching pages with Chinese selected
-- **Immediate Initialization**: Language set before page content loads
-- **Smooth Transitions**: Content fade-in effect after translations are applied
-- **Click Protection**: Prevented rapid language switching to avoid performance issues
-- **DOM Caching**: Reduced DOM queries by 75% for faster language updates
+- **Progressive Web App (PWA)**: Complete PWA implementation with installability
+- **Offline Support**: Service worker for offline functionality and caching
+- **App Installation**: Install prompts and app-like experience
+- **Offline Page**: Dedicated offline page with reconnection handling
+- **PWA Management**: Automatic updates and online/offline status monitoring
+- **Enhanced Icons**: Multiple icon sizes for different devices and platforms
+- **Performance Optimizations**: Debounced language switching with DOM caching
+- **Language Flash Fix**: Immediate i18n initialization prevents content flash
+- **Smooth Transitions**: Content fade-in after language initialization
+- **Rapid Click Protection**: Prevents excessive language switching
 
 ### v1.7
 - **Multi-language Support**: Added English and Chinese (Hong Kong) localization
