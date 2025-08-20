@@ -125,3 +125,100 @@ table.table.dashboard-table th:nth-child(7), table.table.dashboard-table td:nth-
   .brand{font-size:18px}
 }
 
+/* PWA Styles */
+.install-btn {
+  display: none;
+  background: linear-gradient(180deg, var(--brand), var(--brand-600));
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.install-btn:hover {
+  filter: brightness(0.95);
+}
+
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--warn);
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 1001;
+  display: none;
+}
+
+.update-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  max-width: 300px;
+}
+
+.update-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.update-content span {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.update-content button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.update-content button:first-of-type {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.update-content button:hover {
+  filter: brightness(0.95);
+}
+
+/* PWA-specific responsive adjustments */
+@media (display-mode: standalone) {
+  .navbar {
+    padding-top: calc(16px + env(safe-area-inset-top));
+  }
+  
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Prevent zoom on input focus for PWA */
+@media screen and (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
