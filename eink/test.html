@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>E‑ink Admin • Test</title>
+    <link rel="stylesheet" href="styles.css?v=1.7" />
+    <script defer src="i18n.js?v=1.7"></script>
+    <script defer src="app.js?v=1.7"></script>
+  </head>
+  <body data-page="test">
+    <header class="navbar">
+      <div class="nav-left">
+        <div class="logos">
+          <img src="assets/ha_logo.jpg" alt="HA Logo" class="logo" />
+          <img src="assets/hhh_logo.jpg" alt="HHH Logo" class="logo" />
+        </div>
+        <h1 class="brand" data-i18n="brand">專科門診 SOPD</h1>
+      </div>
+      <nav class="nav-links">
+        <a href="index.html" data-i18n="home">Home</a>
+        <a href="dashboard.html" data-i18n="dashboard">Dashboard</a>
+        <a href="settings.html" data-i18n="settings">Settings</a>
+      </nav>
+      <div class="nav-right">
+        <div id="languageSwitcher"></div>
+        <button id="logoutBtn" class="btn btn-ghost" data-i18n="logout">Logout</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <h2 class="page-title">Internationalization Test</h2>
+      <div class="card">
+        <h3>Test Content</h3>
+        <p>Current Language: <span id="currentLang"></span></p>
+        <p>Brand: <span data-i18n="brand">專科門診 SOPD</span></p>
+        <p>Login: <span data-i18n="login">Login</span></p>
+        <p>Dashboard: <span data-i18n="dashboard">Dashboard</span></p>
+        <p>Settings: <span data-i18n="settings">Settings</span></p>
+        <p>Staff Directory: <span data-i18n="staffDirectory">Staff Directory</span></p>
+        <p>Doctor: <span data-i18n="doctor">Doctor</span></p>
+        <p>Staff: <span data-i18n="staff">Staff</span></p>
+        <p>Active: <span data-i18n="active">Active</span></p>
+        <p>Standby: <span data-i18n="standby">Standby</span></p>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span data-i18n="footer">HA • HHH — E‑ink Admin Prototype</span>
+    </footer>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Initialize internationalization
+        I18N.initializeLanguage();
+        
+        // Add language switcher
+        const languageSwitcherContainer = document.getElementById('languageSwitcher');
+        if (languageSwitcherContainer) {
+          languageSwitcherContainer.appendChild(I18N.createLanguageSwitcher());
+        }
+        
+        // Show current language
+        document.getElementById('currentLang').textContent = I18N.getLanguage();
+      });
+    </script>
+  </body>
+</html>
