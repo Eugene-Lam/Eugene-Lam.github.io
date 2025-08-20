@@ -464,9 +464,6 @@ function renderHome() {
 
 // Router per page
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize internationalization
-  I18N.initializeLanguage();
-  
   // Add language switcher to all pages
   const languageSwitcherContainer = document.getElementById('languageSwitcher');
   if (languageSwitcherContainer) {

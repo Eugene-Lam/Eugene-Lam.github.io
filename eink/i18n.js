@@ -284,3 +284,36 @@ const I18N = {
 
 // Export for use in other modules
 window.I18N = I18N;
+
+// Initialize language immediately when script loads
+(function() {
+  // Add loading class to body
+  document.body.classList.add('i18n-loading');
+  
+  const savedLanguage = localStorage.getItem('eink.language');
+  const browserLanguage = navigator.language || navigator.userLanguage;
+  
+  if (savedLanguage && TRANSLATIONS[savedLanguage]) {
+    currentLanguage = savedLanguage;
+  } else if (browserLanguage.startsWith('zh')) {
+    currentLanguage = 'zh-HK';
+  } else {
+    currentLanguage = 'en';
+  }
+  
+  // Set document language immediately
+  document.documentElement.lang = currentLanguage;
+  
+  // Update page content immediately
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      I18N.updatePageLanguage();
+      document.body.classList.remove('i18n-loading');
+      document.body.classList.add('i18n-ready');
+    });
+  } else {
+    I18N.updatePageLanguage();
+    document.body.classList.remove('i18n-loading');
+    document.body.classList.add('i18n-ready');
+  }
+})();
