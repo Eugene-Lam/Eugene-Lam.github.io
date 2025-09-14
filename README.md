@@ -231,6 +231,20 @@ Thank you to [all past contributors](https://github.com/daattali/beautiful-jekyl
 
 You can also contribute by becoming an [official sponsor](https://github.com/sponsors/daattali/sponsorships?tier_id=39856) to help keep Beautiful Jekyll well-maintained!
 
+# Projects & Applications
+
+This website includes several web applications and projects as Git submodules:
+
+## 🎰 Betting Platform Prototype
+- **URL**: [https://eugene-lam.hk/bet/](https://eugene-lam.hk/bet/)
+- **Repository**: [Eugene-Lam/bet](https://github.com/Eugene-Lam/bet)
+- **Description**: A modern HKJC-style betting platform prototype with horse racing, football, and Mark Six betting. Features mobile-first design, live-feeling odds, and client-side state management.
+
+## 📸 Snapchat Media Merger
+- **URL**: [https://eugene-lam.hk/snapchat-merge-photo/](https://eugene-lam.hk/snapchat-merge-photo/)
+- **Repository**: [Eugene-Lam/snapchat-merge-photo](https://github.com/Eugene-Lam/snapchat-merge-photo)
+- **Description**: A web application that merges exported Snapchat photos and videos with their overlay filters. Features drag & drop interface, automatic file pairing, and batch processing with ZIP download.
+
 # Credits
 
 This template was not made *entirely* from scratch. I'd like to give special thanks to [Jekyll Now](https://github.com/barryclark/jekyll-now) and [Bootstrap Clean Blog](https://github.com/IronSummitMedia/startbootstrap-clean-blog), from whom I've taken several ideas initially.
