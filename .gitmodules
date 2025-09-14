@@ -1,3 +1,6 @@
 [submodule "bet"]
 	path = bet
 	url = https://github.com/Eugene-Lam/bet
+[submodule "snapchat-merge-photo"]
+	path = snapchat-merge-photo
+	url = https://github.com/Eugene-Lam/snapchat-merge-photo
