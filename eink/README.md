@@ -56,6 +56,124 @@ All user interface elements are localized:
 - Edit existing staff information
 - Delete staff members
 - Category management (Doctor/Staff)
+- **Import Staff**: Bulk import staff members from CSV or Excel files
+- **Download Template**: Get a sample CSV template file for importing
+
+## Import Staff from CSV/Excel
+
+The application supports bulk importing staff members from CSV or Excel files, making it easy to add multiple staff members at once.
+
+### Getting the Template
+
+1. Navigate to the **Settings** page
+2. Click the **"Download Template"** button
+3. A CSV template file (`staff_import_template.csv`) will be downloaded
+
+Alternatively, you can use the template file provided in the project: `staff_import_template.csv`
+
+### CSV File Format
+
+The CSV file must follow this format:
+
+```
+Chinese Name,English Name,Category
+陳大文醫生,Dr Simon CHAN,Doctor
+李小美醫生,Dr Emily LEE,Doctor
+黃志強醫生,Dr Alex WONG,Doctor
+王小美,Therapist WONG,Staff
+李志強,Nurse LEE,Staff
+```
+
+### Column Requirements
+
+- **Chinese Name** (Column 1): The staff member's name in Chinese. Can be empty if English name is provided.
+- **English Name** (Column 2): The staff member's name in English. Can be empty if Chinese name is provided.
+- **Category** (Column 3): Must be either `Doctor` or `Staff`. Defaults to `Doctor` if not specified.
+
+**Note**: At least one name field (Chinese or English) must be filled for each row.
+
+### Editing the CSV File
+
+#### Using Microsoft Excel
+
+1. Open the template file in Microsoft Excel
+2. Add your staff data in the rows below the header
+3. Ensure each row has:
+   - Chinese name (optional, but recommended)
+   - English name (optional, but recommended)
+   - Category: `Doctor` or `Staff`
+4. Save the file as CSV (Comma delimited) format
+5. **Important**: When saving, choose "CSV UTF-8 (Comma delimited) (*.csv)" to preserve Chinese characters
+
+#### Using Google Sheets
+
+1. Upload the template file to Google Sheets
+2. Edit the data as needed
+3. Go to **File → Download → Comma-separated values (.csv, current sheet)**
+4. The downloaded file will be ready for import
+
+#### Using a Text Editor
+
+1. Open the template file in any text editor (Notepad, TextEdit, VS Code, etc.)
+2. Add new rows following the format:
+   ```
+   Chinese Name,English Name,Category
+   ```
+3. Separate each field with a comma
+4. If a field contains commas, wrap it in double quotes: `"Name, with comma"`
+5. Save the file with `.csv` extension
+6. Ensure the file is saved with UTF-8 encoding to preserve Chinese characters
+
+### Importing the File
+
+1. Navigate to the **Settings** page
+2. Click **"Select File"** button
+3. Choose your CSV or Excel file (`.csv`, `.xlsx`, or `.xls`)
+4. The system will automatically:
+   - Parse the file
+   - Validate the data
+   - Import all valid staff members
+   - Show a success message with the number of imported staff
+
+### Supported File Formats
+
+- **CSV** (`.csv`): Comma-separated values file
+- **Excel** (`.xlsx`, `.xls`): Microsoft Excel files
+
+### Excel File Format
+
+If using Excel files:
+- The first row can be a header row (will be automatically detected)
+- Column names can be in English or Chinese
+- Supported column names:
+  - Chinese: `Chinese Name`, `中文姓名`, `中文`, or any column containing "chinese" or "中文"
+  - English: `English Name`, `英文姓名`, `英文`, or any column containing "english" or "英文"
+  - Category: `Category`, `類別`, or any column containing "category" or "類別"
+- If column names are not found, the system assumes the order: Column 1 = Chinese, Column 2 = English, Column 3 = Category
+
+### Tips for Editing
+
+1. **Preserve Headers**: Keep the first row as headers (Chinese Name, English Name, Category)
+2. **UTF-8 Encoding**: Always save CSV files with UTF-8 encoding to preserve Chinese characters
+3. **No Empty Rows**: Remove any completely empty rows before importing
+4. **Category Values**: Use exactly `Doctor` or `Staff` (case-insensitive, but must match these words)
+5. **Special Characters**: If a name contains commas, wrap the entire field in double quotes
+6. **Validation**: At least one name field (Chinese or English) must be filled for each row
+
+### Example CSV Content
+
+```csv
+Chinese Name,English Name,Category
+陳大文醫生,Dr Simon CHAN,Doctor
+李小美醫生,Dr Emily LEE,Doctor
+黃志強醫生,Dr Alex WONG,Doctor
+王小美,Therapist WONG,Staff
+李志強,Nurse LEE,Staff
+張三,Dr John ZHANG,Doctor
+,"Dr Mary SMITH",Doctor
+```
+
+Note: The last row shows that you can leave Chinese name empty if you only have an English name.
 
 ## Technical Details
 
@@ -72,8 +190,9 @@ eink/
 ├── manifest.json   # PWA manifest
 ├── sw.js           # Service worker
 ├── pwa.js          # PWA management
-├── test.html       # Language test page
-└── assets/         # Images, logos, and icons
+├── test.html                    # Language test page
+├── staff_import_template.csv     # CSV template for staff import
+└── assets/                      # Images, logos, and icons
 ```
 
 ### Internationalization System
@@ -124,7 +243,15 @@ For detailed PWA documentation, see [PWA-README.md](PWA-README.md).
 
 ## Version History
 
-### v1.8 (Current)
+### v1.8.2 (Current)
+- **Staff Import Feature**: Bulk import staff members from CSV or Excel files
+- **Template Download**: Download CSV template for easy data entry
+- **Excel Support**: Full support for .xlsx and .xls file formats
+- **Flexible Column Detection**: Automatic detection of column names in multiple languages
+- **Import Validation**: Comprehensive error handling and validation
+- **Bilingual Import Messages**: Import status messages in English and Chinese
+
+### v1.8 (Previous)
 - **Progressive Web App (PWA)**: Complete PWA implementation with installability
 - **Offline Support**: Service worker for offline functionality and caching
 - **App Installation**: Install prompts and app-like experience
