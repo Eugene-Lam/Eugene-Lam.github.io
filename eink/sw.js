@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eink-admin-v1.8.1';
+const CACHE_NAME = 'eink-admin-v1.8.2';
 const urlsToCache = [
   '/eink/',
   '/eink/index.html',
