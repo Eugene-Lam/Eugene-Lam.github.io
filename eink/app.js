@@ -1,5 +1,5 @@
 // Simple in-browser state for prototype purpose only
-const APP_VERSION = '1.8.1';
+const APP_VERSION = '1.8.2';
 const STORAGE_KEYS = {
   version: 'eink.version',
   loggedIn: 'eink.loggedIn',
@@ -361,6 +361,9 @@ function renderSettings() {
   // Modal functionality
   setupEditModal();
   
+  // Import functionality
+  setupImport();
+  
   // Re-render when language changes
   document.addEventListener('languageChanged', () => {
     renderSettings();
@@ -436,6 +439,244 @@ function setupEditModal() {
       editFormWarning.style.display = 'none';
     }
   });
+}
+
+// Import functionality
+function parseCSV(text) {
+  const lines = text.split('\n').filter(line => line.trim());
+  if (lines.length === 0) return [];
+  
+  // Check if first line is header (optional)
+  const startIndex = lines[0].toLowerCase().includes('chinese') || 
+                     lines[0].toLowerCase().includes('english') ? 1 : 0;
+  
+  const data = [];
+  for (let i = startIndex; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Simple CSV parsing (handles quoted fields)
+    const fields = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let j = 0; j < line.length; j++) {
+      const char = line[j];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        fields.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    fields.push(current.trim()); // Last field
+    
+    if (fields.length >= 2) {
+      const chinese = fields[0] || '';
+      const english = fields[1] || '';
+      const category = (fields[2] || 'Doctor').trim();
+      const normalizedCategory = category.toLowerCase() === 'staff' ? 'Staff' : 'Doctor';
+      
+      if (chinese || english) {
+        data.push({ chinese, english, category: normalizedCategory });
+      }
+    }
+  }
+  
+  return data;
+}
+
+function parseExcel(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const arrayBuffer = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        
+        // Get first sheet
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        
+        // Convert to JSON - first try with headers, then without
+        let jsonData = XLSX.utils.sheet_to_json(worksheet, { 
+          defval: '',
+          raw: false
+        });
+        
+        // Check if first row looks like a header
+        const firstRow = jsonData[0];
+        const hasHeader = firstRow && (
+          Object.keys(firstRow).some(key => 
+            key && (key.toLowerCase().includes('chinese') || 
+                   key.toLowerCase().includes('english') ||
+                   key.toLowerCase().includes('category'))
+          ) ||
+          Object.values(firstRow).some(val => 
+            val && typeof val === 'string' && (
+              val.toLowerCase().includes('chinese') || 
+              val.toLowerCase().includes('english') ||
+              val.toLowerCase().includes('category')
+            )
+          )
+        );
+        
+        // If header detected, remove first row
+        if (hasHeader && jsonData.length > 0) {
+          jsonData = jsonData.slice(1);
+        }
+        
+        // Normalize column names - try to find chinese, english, category columns
+        const parsedData = jsonData
+          .map(row => {
+            let chinese = '';
+            let english = '';
+            let category = 'Doctor';
+            
+            // Try to find columns by name (case-insensitive)
+            const keys = Object.keys(row);
+            for (const key of keys) {
+              const keyLower = key.toLowerCase();
+              const val = (row[key] || '').toString().trim();
+              
+              if (keyLower.includes('chinese') || keyLower.includes('中文')) {
+                chinese = val;
+              } else if (keyLower.includes('english') || keyLower.includes('英文')) {
+                english = val;
+              } else if (keyLower.includes('category') || keyLower.includes('類別')) {
+                category = val;
+              }
+            }
+            
+            // If no named columns found, assume order: chinese, english, category
+            if (!chinese && !english && keys.length >= 2) {
+              const values = Object.values(row);
+              chinese = (values[0] || '').toString().trim();
+              english = (values[1] || '').toString().trim();
+              category = (values[2] || 'Doctor').toString().trim();
+            }
+            
+            const normalizedCategory = category.toLowerCase() === 'staff' ? 'Staff' : 'Doctor';
+            
+            return { chinese, english, category: normalizedCategory };
+          })
+          .filter(row => row.chinese || row.english);
+        
+        resolve(parsedData);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = () => reject(new Error('Failed to read file'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+async function handleFileImport(file) {
+  const importStatus = document.getElementById('importStatus');
+  if (!importStatus) return;
+  
+  importStatus.style.display = 'block';
+  importStatus.style.background = 'var(--bg)';
+  importStatus.style.color = 'var(--text)';
+  importStatus.textContent = I18N.getText('importing') || 'Importing...';
+  
+  try {
+    let data = [];
+    const fileName = file.name.toLowerCase();
+    
+    if (fileName.endsWith('.csv')) {
+      const text = await file.text();
+      data = parseCSV(text);
+    } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+      if (typeof XLSX === 'undefined') {
+        throw new Error('Excel library not loaded');
+      }
+      data = await parseExcel(file);
+    } else {
+      throw new Error(I18N.getText('importInvalidFormat'));
+    }
+    
+    if (data.length === 0) {
+      throw new Error(I18N.getText('importNoData'));
+    }
+    
+    // Import the data
+    const doctors = getDoctors();
+    let importedCount = 0;
+    
+    data.forEach(item => {
+      if (item.chinese || item.english) {
+        doctors.push({
+          id: crypto.randomUUID(),
+          chinese: item.chinese,
+          english: item.english,
+          category: item.category || 'Doctor'
+        });
+        importedCount++;
+      }
+    });
+    
+    saveDoctors(doctors);
+    
+    // Show success message
+    importStatus.style.background = 'var(--ok)';
+    importStatus.style.color = '#fff';
+    const successMsg = I18N.getText('importSuccess').replace('{count}', importedCount);
+    importStatus.textContent = successMsg;
+    
+    // Refresh the table
+    renderSettings();
+    
+    // Clear file input
+    const fileInput = document.getElementById('importFile');
+    if (fileInput) fileInput.value = '';
+    
+    // Hide status after 5 seconds
+    setTimeout(() => {
+      importStatus.style.display = 'none';
+    }, 5000);
+    
+  } catch (error) {
+    importStatus.style.background = 'var(--danger)';
+    importStatus.style.color = '#fff';
+    const errorMsg = I18N.getText('importError').replace('{error}', error.message);
+    importStatus.textContent = errorMsg;
+    
+    // Hide status after 5 seconds
+    setTimeout(() => {
+      importStatus.style.display = 'none';
+    }, 5000);
+  }
+}
+
+function downloadTemplate() {
+  const csvContent = 'Chinese Name,English Name,Category\n陳大文醫生,Dr Simon CHAN,Doctor\n李小美醫生,Dr Emily LEE,Doctor\n黃志強醫生,Dr Alex WONG,Doctor\n王小美,Therapist WONG,Staff\n李志強,Nurse LEE,Staff';
+  const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' }); // BOM for Excel UTF-8 support
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  link.setAttribute('download', I18N.getText('templateFileName'));
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function setupImport() {
+  const importFile = document.getElementById('importFile');
+  const downloadTemplateBtn = document.getElementById('downloadTemplateBtn');
+  
+  importFile?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      handleFileImport(file);
+    }
+  });
+  
+  downloadTemplateBtn?.addEventListener('click', downloadTemplate);
 }
 
 function wireCommon() {

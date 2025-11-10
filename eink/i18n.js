@@ -69,7 +69,19 @@ const TRANSLATIONS = {
     editStaffMember: 'Edit Staff Member',
     
     // Aria labels
-    toggleActiveStandby: 'Toggle Active / Standby'
+    toggleActiveStandby: 'Toggle Active / Standby',
+    
+    // Import
+    importStaff: 'Import Staff',
+    importStaffDescription: 'Upload a CSV or Excel file to import multiple staff members at once. Format: Chinese Name, English Name, Category (Doctor/Staff)',
+    selectFile: 'Select File',
+    downloadTemplate: 'Download Template',
+    importSuccess: 'Successfully imported {count} staff member(s)',
+    importError: 'Error importing file: {error}',
+    importNoData: 'No valid data found in the file',
+    importInvalidFormat: 'Invalid file format. Please use CSV or Excel (.xlsx, .xls)',
+    templateFileName: 'staff_import_template.csv',
+    importing: 'Importing...'
   },
   
   'zh-HK': {
@@ -141,7 +153,19 @@ const TRANSLATIONS = {
     editStaffMember: '編輯職員',
     
     // Aria labels
-    toggleActiveStandby: '切換啟用/待機'
+    toggleActiveStandby: '切換啟用/待機',
+    
+    // Import
+    importStaff: '匯入職員',
+    importStaffDescription: '上傳 CSV 或 Excel 檔案以一次匯入多個職員。格式：中文姓名、英文姓名、類別（醫生/職員）',
+    selectFile: '選擇檔案',
+    downloadTemplate: '下載範本',
+    importSuccess: '成功匯入 {count} 位職員',
+    importError: '匯入檔案時發生錯誤：{error}',
+    importNoData: '檔案中找不到有效資料',
+    importInvalidFormat: '無效的檔案格式。請使用 CSV 或 Excel (.xlsx, .xls)',
+    templateFileName: 'staff_import_template.csv',
+    importing: '匯入中...'
   }
 };
 

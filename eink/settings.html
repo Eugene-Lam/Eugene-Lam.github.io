@@ -22,10 +22,11 @@
     <link rel="manifest" href="manifest.json" />
     
     <title>E‑ink Admin • Settings</title>
-    <link rel="stylesheet" href="styles.css?v=1.8.1" />
-    <script defer src="i18n.js?v=1.8.1"></script>
-    <script defer src="app.js?v=1.8.1"></script>
-    <script defer src="pwa.js?v=1.8.1"></script>
+    <link rel="stylesheet" href="styles.css?v=1.8.2" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script defer src="i18n.js?v=1.8.2"></script>
+    <script defer src="app.js?v=1.8.2"></script>
+    <script defer src="pwa.js?v=1.8.2"></script>
   </head>
   <body data-page="settings">
     <header class="navbar">
@@ -50,6 +51,23 @@
 
     <main class="container">
       <h2 class="page-title" data-i18n="staffDirectory">Staff Directory</h2>
+      
+      <!-- Import Section -->
+      <div class="card row-gap" style="margin-bottom: 24px;">
+        <h3 style="margin: 0; font-size: 16px; font-weight: 600;" data-i18n="importStaff">Import Staff</h3>
+        <p style="margin: 0 0 12px 0; color: var(--muted); font-size: 14px;" data-i18n="importStaffDescription">
+          Upload a CSV or Excel file to import multiple staff members at once. Format: Chinese Name, English Name, Category (Doctor/Staff)
+        </p>
+        <div class="actions">
+          <label for="importFile" class="btn btn-primary" style="cursor: pointer;">
+            <input type="file" id="importFile" accept=".csv,.xlsx,.xls" style="display: none;" />
+            <span data-i18n="selectFile">Select File</span>
+          </label>
+          <button type="button" id="downloadTemplateBtn" class="btn" data-i18n="downloadTemplate">Download Template</button>
+        </div>
+        <div id="importStatus" style="display: none; margin-top: 12px; padding: 12px; border-radius: 8px; font-size: 14px;"></div>
+      </div>
+
       <form id="doctorForm" class="card row-gap">
         <div class="grid three">
           <label class="field">
