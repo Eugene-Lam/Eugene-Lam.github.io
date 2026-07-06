@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全港的士待客與快速起候點網絡</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="sidebar">
+    <header>
+      <h1>的士待客點網絡</h1>
+      <p class="subtitle">日班 38 個候客點（的士站＋路邊泊位）· 10 分鐘覆蓋圈</p>
+      <p class="legend">
+        <span class="leg taxi">的士站 23</span>
+        <span class="leg metered">咪錶 14</span>
+        <span class="leg free">免費 1</span>
+      </p>
+    </header>
+    <div class="controls">
+      <label class="toggle">
+        <input type="checkbox" id="toggle-all-iso">
+        顯示所有 10 分鐘覆蓋圈
+      </label>
+    </div>
+    <ul id="spot-list"></ul>
+    <footer>
+      數據來源：運輸署（data.gov.hk / CSDI）· 等時圈：Valhalla / OpenStreetMap
+    </footer>
+  </div>
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/spots.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

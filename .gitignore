@@ -11,3 +11,9 @@ ehthumbs.db
 Gemfile.lock
 
 beautiful-jekyll-theme-*.gem
+
+Resume-*.pdf
+
+# Large parking GeoJSON (regenerate via taxi/scripts)
+taxi/data/metered_parking.geojson
+taxi/data/nonmetered_parking.geojson
