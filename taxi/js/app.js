@@ -46,6 +46,20 @@ function showNearbyParking(s) {
   )).addTo(map);
 }
 
+function navLinksHtml(lat, lng) {
+  const q = `${lat},${lng}`;
+  const amapPos = `${lng},${lat}`; // 高德：經度,緯度
+  const links = [
+    { label: 'Google', href: `https://www.google.com/maps/dir/?api=1&destination=${q}` },
+    { label: 'Apple', href: `https://maps.apple.com/?daddr=${q}` },
+    { label: 'Waze', href: `https://www.waze.com/ul?ll=${q}&navigate=yes` },
+    { label: '高德', href: `https://uri.amap.com/navigation?to=${amapPos},候客點&mode=car` }
+  ];
+  return `<div class="nav-links">${links.map(l =>
+    `<a class="nav-btn" target="_blank" rel="noopener" href="${l.href}">${l.label}</a>`
+  ).join('')}</div>`;
+}
+
 function popupHtml(s) {
   const [lat, lng] = s.coords;
   const typeLine = s.parkingInfo
@@ -64,7 +78,8 @@ function popupHtml(s) {
       ${nearbyListHtml(s)}
       <dt>座標</dt><dd>${lat.toFixed(6)}, ${lng.toFixed(6)}</dd>
     </dl>
-    <a class="nav-btn" target="_blank" href="https://www.google.com/maps?q=${lat},${lng}">Google Maps 導航</a>
+    <p class="nav-label">導航</p>
+    ${navLinksHtml(lat, lng)}
   `;
 }
 
